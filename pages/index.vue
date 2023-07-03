@@ -1,26 +1,39 @@
 <template>
   <div id="container">
-    <!-- <NuxtWelcome /> -->
     <div id="brand">
-      <img id="logo" alt="foursquare jebako logo" src="assets/logo.png" />
-      <h1>JEBAKO AGMM<br />Voting Platform</h1>
+      <img id="logo" alt="foursquare jebako logo" src="@/assets/logo.png" />
+      <h1>JEBAKO AGMM<br />VOTING PLATFORM</h1>
     </div>
 
     <div id="ctr">
-      <label for="pw">Password</label>
-      <input id="pw" type="number" size="6" placeholder="Enter Password">
-      <button>Login</button>
+      <form @submit="onLogin">
+        <label for="pw">Password</label>
+        <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
+        <p id="error" v-show="err">Wrong Password. No record found</p>
+        <input id="submit-btn" type="submit" value="Login" />
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+let err = ref(false);
+const password = ref()
+const userState = useState('password', () => password);
+
 useHead({
   title: 'Jebako AGMM - Login',
-  meta: [
-    { name: 'description', content: 'Jebako AGMM Votin Platform' }
-  ]
-})
+  meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
+});
+
+const onLogin = (e: Event) => {
+  e.preventDefault();
+  if (password.value === '@admin') {
+    return navigateTo('/vote');
+  } else {
+    err.value = true;
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -35,7 +48,7 @@ useHead({
   width: 100%;
   height: 100vh;
   display: flex;
-  font-family: 'Noto Sans';
+  font-family: 'Poppins', sans-serif;
   font-weight: 400;
   flex-direction: column;
   justify-content: center;
@@ -47,9 +60,11 @@ useHead({
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   #logo {
     width: 100px;
     height: 100px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
   }
 
   h1 {
@@ -59,46 +74,63 @@ useHead({
   }
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+}
+
 #ctr {
   .center();
-  align-items: start;
+  align-items: flex-start;
   margin-top: 20px;
 
   label {
     text-align: left;
-    color: rgba(31, 31, 31, 0.418);
+    color: rgba(31, 31, 31, 0.747);
   }
 
   input {
     width: 300px;
     max-width: 100%;
     margin-top: 5px;
-    height: 50px;
+    height: 45px;
     border: 2px solid #e6e6e6;
     border-radius: 5px;
     padding: 10px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 
-    &:hover, &:focus, &:active, &:focus-visible {
+    &:hover,
+    &:focus,
+    &:active,
+    &:focus-visible {
       outline: none;
       border-color: #2a52be;
     }
   }
 
-  button {
+  #error {
+    margin-top: 5px;
+    background: #ffe6e6;
+    color: #b30000;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  #submit-btn {
     .center();
     width: 300px;
     max-width: 100%;
-    margin-top: 15px;
-    height: 50px;
+    height: 45px;
     border: none;
+    box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #2a52be;
+    background: #4158f8;
+    border: 2px solid lighten(#4158f8, 10%);
     color: white;
+    cursor: pointer;
 
     &:hover {
-      background: ;
+      background: darken(#4158f8, 5%);
     }
   }
 }

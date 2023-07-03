@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxtjs/google-fonts": "^3.0.1",
     "@types/node": "^18",
-    "nuxt": "^3.6.1"
+    "nuxt": "^3.6.1",
+    "nuxt-icon": "^0.4.2"
   },
   "dependencies": {
     "less": "^4.1.3"
