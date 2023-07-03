@@ -37,12 +37,7 @@ const onLogin = (e: Event) => {
 </script>
 
 <style lang="less" scoped>
-.center() {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+@import '../assets/theme.less';
 
 #container {
   width: 100%;
