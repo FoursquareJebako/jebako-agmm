@@ -84,7 +84,15 @@
 
 #container {
   padding: 15px;
+  padding-bottom: 100px;
   margin-top: 20px;
+  font-size: 1.5rem;
+
+  @media @desktop {
+    //background: red;
+    width: 600px;
+    padding-left: 50px;
+  }
 
   label {
     display: flex;

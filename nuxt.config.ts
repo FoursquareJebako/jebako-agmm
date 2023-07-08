@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ['nuxt-icon'],
-  ssr: true,
+  ssr: false,
   nitro: {
     prerender: {
       crawlLinks: true

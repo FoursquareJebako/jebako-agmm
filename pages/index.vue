@@ -98,7 +98,7 @@ form {
     &:active,
     &:focus-visible {
       outline: none;
-      border-color: #2a52be;
+      border-color: #4e4feb;
     }
   }
 
@@ -119,13 +119,12 @@ form {
     box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #4158f8;
-    border: 2px solid lighten(#4158f8, 10%);
+    background: #4e4feb;
     color: white;
     cursor: pointer;
 
     &:hover {
-      background: darken(#4158f8, 5%);
+      background: darken(#4e4feb, 5%);
     }
   }
 }

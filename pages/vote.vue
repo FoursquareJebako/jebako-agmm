@@ -89,6 +89,11 @@ definePageMeta({
   padding: 15px;
   border-bottom: 1px solid #ccc;
 
+  @media @desktop {
+    text-align: center;
+    align-items: center;
+  }
+
   .text {
     font-size: 2rem;
     width: 100%;
@@ -126,6 +131,10 @@ definePageMeta({
   padding: 15px 0;
   border-radius: 5px;
   //color: #373a48;
+
+  @media @desktop {
+    text-align: center;
+  }
 
   p {
     color: #595d73;
@@ -201,8 +210,7 @@ definePageMeta({
     box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #4158f8;
-    border: 2px solid lighten(#4158f8, 10%);
+    background: #4e4feb;
     color: white;
     cursor: pointer;
 
@@ -213,7 +221,7 @@ definePageMeta({
     }
 
     &:not(:disabled):hover {
-      background: darken(#4158f8, 5%);
+      background: darken(#4e4feb, 5%);
     }
   }
 }
