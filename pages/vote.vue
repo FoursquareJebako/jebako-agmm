@@ -48,8 +48,17 @@
 
 <script setup lang="ts">
 import { ref, useState, definePageMeta } from '#imports'
-const user = useState('user')
+const user = useState<User>('user')
 const ac = ref(1)
+
+interface User {
+  name: string,
+  sex:string,
+  address: string,
+  phone: string,
+  email: string
+}
+
 definePageMeta({
   middleware: 'auth',
 });
@@ -104,7 +113,7 @@ const chooseFn = (num: number) => {
   }
 
   .text {
-    font-size: 2rem;
+    font-size: 1.8rem;
     width: 100%;
     word-wrap: break-word;
     color: #373a48;

@@ -12,7 +12,7 @@
   <div id="container">
     <label>
       Full Name (Surname first):
-      <input type="text" value=user.name />
+      <input type="text" :value=user.name />
     </label>
     <div class="radio">
       <label>Male<input name="gender" type="radio"/></label>
@@ -20,7 +20,7 @@
     </div>
     <label>
       Home Address (Residential):
-      <input type="text" value=user.address />
+      <input type="text" :value=user.address />
     </label>
     <label>
       Date of Birth (date/month/year):
@@ -28,29 +28,29 @@
     </label>
     <label>
       Phone Number:
-      <input type="text" value=user.phone />
+      <input type="text" :value=user.phone />
     </label>
     <label>
       Email:
-      <input type="text" value=user.email />
+      <input type="text" :value=user.email />
     </label>
     <label>
       Church Department:
-      <input type="text" value=user.dept />
+      <input type="text" :value=user.dept />
     </label>
 
     <button id="update-btn">Upadate Profile</button>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { ref, useState, definePageMeta } from '#imports'
 const user = useState('user')
 definePageMeta({
   middleware: 'auth',
 });
 
-const chooseFn = (e: Event) => {
+const chooseFn = (e) => {
   //e.target.classList.add('active')
 }
 </script>
@@ -62,6 +62,7 @@ const chooseFn = (e: Event) => {
   background: #f4f4f5;
   color: #373a48;
   position: relative;
+  border-bottom: 1px solid #ccc;
 }
 
 #header {
@@ -89,7 +90,7 @@ const chooseFn = (e: Event) => {
 
   p {
     word-wrap: break-word;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   #title {
