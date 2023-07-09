@@ -16,24 +16,52 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 let err = ref(false);
 const password = ref()
 const userState = useState('password', () => password);
+const supabase = useSupabaseClient();
 
 useHead({
   title: 'Jebako AGMM - Login',
   meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
 });
 
-const onLogin = (e: Event) => {
+const onLogin = async (e) => {
   e.preventDefault();
   if (password.value === '@admin') {
-    return navigateTo('/vote');
+    return navigateTo('/admin');
+  }
+
+  if (password.value && password.value.length === 6) {
+    let data = await getData();
+    if (data) {
+      const user = useState('user', () => data)
+      //console.log(data)
+      await navigateTo('/vote')
+      return;
+    }
+
+    err.value = true
   } else {
-    err.value = true;
+    err.value = true
   }
 };
+
+const getData = async () => {
+  /* const { data, error } = await useAsyncData('login', async () => {
+    const { data, error } = await supabase.from('members').select('id');
+    console.log(data, error)
+    return error ||  data
+  }) */
+
+  const { data, error } = await supabase.from('members').select().eq('id', Number(password.value)).single();
+  if (error) {
+    console.log('Error:', error, typeof(password.value))
+    return false
+  }
+  return data
+}
 </script>
 
 <style lang="less" scoped>

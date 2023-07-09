@@ -1,6 +1,9 @@
-const user = useState('password')
+
+import { useState } from '#imports'
+const user = () => useState('password')
 export default defineNuxtRouteMiddleware((to, from) => {
-    if (from.path !== 'profile/' && user.value !== '@admin') {
+    const user = useState('user')
+    if (from.path !== 'profile/' && !user.value) {
         return navigateTo('/')
     }
 });

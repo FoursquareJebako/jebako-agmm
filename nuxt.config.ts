@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
-  modules: ['nuxt-icon'],
-  ssr: false,
+  modules: ['nuxt-icon', '@nuxtjs/supabase'],
+  ssr: true,
   nitro: {
     prerender: {
       crawlLinks: true

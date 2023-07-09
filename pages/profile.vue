@@ -12,15 +12,15 @@
   <div id="container">
     <label>
       Full Name (Surname first):
-      <input type="text" value="Ransome-kuti Bukunmi Isaiah" />
+      <input type="text" value=user.name />
     </label>
     <div class="radio">
-      <label>Male<input name="gender" type="radio" /></label>
-      <label>Female<input name="gender" type="radio" /></label>
+      <label>Male<input name="gender" type="radio"/></label>
+      <label>Female<input name="gender" type="radio" checked /></label>
     </div>
     <label>
       Home Address (Residential):
-      <input type="text" />
+      <input type="text" value=user.address />
     </label>
     <label>
       Date of Birth (date/month/year):
@@ -28,16 +28,32 @@
     </label>
     <label>
       Phone Number:
-      <input type="text" />
+      <input type="text" value=user.phone />
+    </label>
+    <label>
+      Email:
+      <input type="text" value=user.email />
     </label>
     <label>
       Church Department:
-      <input type="text" />
+      <input type="text" value=user.dept />
     </label>
 
     <button id="update-btn">Upadate Profile</button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, useState, definePageMeta } from '#imports'
+const user = useState('user')
+definePageMeta({
+  middleware: 'auth',
+});
+
+const chooseFn = (e: Event) => {
+  //e.target.classList.add('active')
+}
+</script>
 
 <style scoped lang="less">
 @import '../assets/theme.less';

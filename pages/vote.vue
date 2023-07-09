@@ -7,7 +7,7 @@
     </div>
 
     <div id="welcome-banner">
-      <p class="text">Welcome,<br /><span id="name">Bukunmi Ransome-Kuti</span></p>
+      <p class="text">Welcome,<br /><span id="name">{{user.name}}</span></p>
       <p class="status">Yet to vote</p>
     </div>
   </div>
@@ -27,7 +27,7 @@
         </div>
         <div class="content">
           <h3>Mary Joe</h3>
-          <button>Choose</button>
+          <button :class="{ active: ac === 1 }" @click="chooseFn(1)">{{ac === 1 ? 'Selected': 'Select'}}</button>
         </div>
       </div>
 
@@ -37,7 +37,7 @@
         </div>
         <div class="content">
           <h3>Akindele Ayomide Jesutofunmi Joshua</h3>
-          <button class="active">Selected</button>
+          <button :class="{active: ac === 2}" @click="chooseFn(2)">{{ac === 2 ? 'Selected': 'Select'}}</button>
         </div>
       </div>
 
@@ -47,9 +47,18 @@
 </template>
 
 <script setup lang="ts">
+import { ref, useState, definePageMeta } from '#imports'
+const user = useState('user')
+const ac = ref(1)
 definePageMeta({
   middleware: 'auth',
 });
+
+
+const chooseFn = (num: number) => {
+  console.log(typeof(num))
+  ac.value = num
+}
 </script>
 
 <style lang="less" scoped>
