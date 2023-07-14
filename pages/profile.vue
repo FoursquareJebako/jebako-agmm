@@ -1,9 +1,9 @@
 <template>
   <div id="header-wrap">
-    <nuxtLink id="header" to="vote/">
+    <button id="header" @click="goBack()">
       <Icon name="solar:arrow-left-bold-duotone" color="#343f46" size="3rem"></Icon>
       <p>Back</p>
-    </nuxtLink>
+    </button>
     <div id="banner">
       <p><span id="title">Edit Church Records</span><br />Update your details</p>
     </div>
@@ -52,6 +52,10 @@ definePageMeta({
 
 const chooseFn = (e) => {
   //e.target.classList.add('active')
+}
+
+const goBack = () => {
+  useRouter().back();
 }
 </script>
 

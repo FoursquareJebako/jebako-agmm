@@ -10,7 +10,12 @@
         <label for="pw">Password</label>
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err">Wrong Password. No record found</p>
-        <input id="submit-btn" type="submit" value="Login" />
+        <div id="submit-wrapper" :class="{ loading }">
+          <input id="submit-btn" type="submit" :value="submitValue" />
+          <span id="spinner" v-show="loading">
+            <Icon name="mingcute:loading-fill" color="white" size="30px" />
+          </span>
+        </div>
       </form>
     </div>
   </div>
@@ -27,37 +32,49 @@ useHead({
   meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
 });
 
+const loading = ref(false)
+const submitValue = computed(() => {
+  console.log(loading.value)
+  return loading.value === false ? 'Login' : ''
+})
+
+const toggleLoading = (state) => {
+  if (state === true) {
+    loading.value = true
+  } else {
+    loading.value = false
+  }
+}
+
 const onLogin = async (e) => {
   e.preventDefault();
+  toggleLoading(true);
+
   if (password.value === '@admin') {
     return navigateTo('/admin');
+    toggleLoading(false)
   }
 
   if (password.value && password.value.length === 6) {
     let data = await getData();
     if (data) {
       const user = useState('user', () => data)
-      //console.log(data)
       await navigateTo('/vote')
       return;
     }
 
+    toggleLoading(false)
     err.value = true
   } else {
+    toggleLoading(false)
     err.value = true
   }
 };
 
 const getData = async () => {
-  /* const { data, error } = await useAsyncData('login', async () => {
-    const { data, error } = await supabase.from('members').select('id');
-    console.log(data, error)
-    return error ||  data
-  }) */
-
   const { data, error } = await supabase.from('members').select().eq('id', Number(password.value)).single();
   if (error) {
-    console.log('Error:', error, typeof(password.value))
+    //console.log('Error:', error, typeof(password.value))
     return false
   }
   return data
@@ -136,6 +153,30 @@ form {
     color: #b30000;
     padding: 3px 7px;
     border-radius: 2px;
+  }
+
+  #submit-wrapper {
+    position: relative;
+  }
+
+  #spinner {
+    .center();
+    //content: url(../assets/spinner.svg); /* Replace with loading icon or SVG */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: 3px;
+    transform: translate(-50%, -50%);
+    animation: spin 1s infinite linear;
+  }
+
+  @keyframes spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
   }
 
   #submit-btn {
