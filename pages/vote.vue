@@ -2,12 +2,14 @@
   <div id="header-wrap">
     <div id="header">
       <nuxtLink id="profile-btn" to="/profile">
-        <Icon name="solar:user-bold-duotone" size="3rem"/>
+        <Icon name="solar:user-bold-duotone" size="3rem" />
       </nuxtLink>
     </div>
 
     <div id="welcome-banner">
-      <p class="text">Welcome,<br /><span id="name">{{user.name}}</span></p>
+      <p class="text">
+        Welcome,<br /><span id="name">{{ user.name }}</span>
+      </p>
       <p class="status">Yet to vote</p>
     </div>
   </div>
@@ -15,63 +17,159 @@
   <div id="container">
     <div id="instruction">
       <div>
-        <h4>Choose your preferred candidate</h4>
+        <h4>You can only vote three cadidates</h4>
         <p>Click submit vote to confirm your vote</p>
       </div>
     </div>
 
     <div id="vote-container">
-      <div class="card">
+      <div class="card" v-for="contestant in contestants">
         <div class="profile">
-          <img src="@/assets/user1.jpg" />
+          <img :src="contestant.image" />
         </div>
         <div class="content">
-          <h3>Mary Joe</h3>
-          <button :class="{ active: ac === 1 }" @click="chooseFn(1)">{{ac === 1 ? 'Selected': 'Select'}}</button>
+          <h3>{{ contestant.name }}</h3>
+          <button ref="selectBtn" :class="{ active: contestant.selected }" @click="chooseFn(contestant)">
+            {{ contestant.selected ? 'Selected' : 'Select' }}
+          </button>
         </div>
       </div>
-
-      <div class="card">
-        <div class="profile">
-          <img src="@/assets/user2.jpg" />
-        </div>
-        <div class="content">
-          <h3>Akindele Ayomide Jesutofunmi Joshua</h3>
-          <button :class="{active: ac === 2}" @click="chooseFn(2)">{{ac === 2 ? 'Selected': 'Select'}}</button>
-        </div>
-      </div>
-
-      <button disable id="submit">Submit Vote</button>
     </div>
+
+    <button ref="submitBtn" id="submit-btn" @click="submitVote">
+      {{ getSubmitState }}
+      <span id="spinner" v-show="submitState.loading">
+        <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+      </span>
+    </button>
+
+    <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">Cancel Selection</button>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, useState, definePageMeta } from '#imports'
-const user = useState<User>('user')
-const ac = ref(1)
+<script setup lang="js">
+import { ref, useState, definePageMeta } from '#imports';
+const user = useState('user');
+const submitBtn = ref(null);
+const selectBtn = ref(null);
+const submitState = reactive({
+  loading: false,
+  confirm: false
+})
 
-interface User {
-  name: string,
-  sex:string,
-  address: string,
-  phone: string,
-  email: string
-}
+onMounted(() => {
+  isDisabled()
+})
+
+/* interface C {
+  image: string;
+  name: string;
+  selected: boolean
+} */
+
+const contestants = ref([
+  {
+    image: '../img/user1.jpg',
+    name: 'Mary Joe',
+    selected: false,
+  },
+  {
+    image: '../img/user2.jpg',
+    name: 'Akindele Ayomide Jesutofunmi Joshua',
+    selected: false,
+  },
+  {
+    image: '../img/user1.jpg',
+    name: 'Taiwo Emmanuel',
+    selected: false,
+  },
+  {
+    image: '../img/user2.jpg',
+    name: 'Abimbola Joseph',
+    selected: false,
+  },
+]);
+
+/* interface User {
+  name: string;
+  sex: string;
+  address: string;
+  phone: string;
+  email: string;
+} */
 
 definePageMeta({
   middleware: 'auth',
 });
 
+const selected = computed(() => {
+  const all = []
+  for (const x of contestants.value) {
+    if (x.selected) {
+      all.push(x)
+    }
+  }
+  return all
+})
 
-const chooseFn = (num: number) => {
-  console.log(typeof(num))
-  ac.value = num
+const getSubmitState = computed(() => {
+  if (submitState.confirm) {
+    return 'Click again to confirm'
+  } else if (submitState.loading) {
+    return ''
+  } else {
+    return 'Submit Vote'
+  }
+})
+
+const isDisabled = () => {
+  const selectedLen = selected.value.length
+  if (selectedLen === 3) {
+    submitBtn.value.disabled = false
+  } else {
+    submitBtn.value.disabled = true
+  }
+}
+
+const chooseFn = (contestant) => {
+  if (selectBtn.value.disabled) {
+    return;
+  }
+  if (contestant.selected) {
+    contestant.selected = false
+    submitState.confirm = false
+  } else if (selected.value.length < 3) {
+    contestant.selected = !contestant.selected
+  }
+  isDisabled()
+  //console.log(selected.value)
+};
+
+const submitVote = () => {
+  if (submitState.confirm) {
+    //final submit
+    submitState.confirm = false
+    submitState.loading = true
+    submitBtn.value.disabled = true
+    selectBtn.value.disabled = true
+  } else if (!submitState.confirm) {
+    submitState.confirm = true
+  }
+}
+
+const cancelVote = () => {
+  for (const x of contestants.value) {
+    if (x.selected) {
+      x.selected = false
+    }
+  }
+  submitState.confirm = false
+  isDisabled()
 }
 </script>
 
 <style lang="less" scoped>
-@import "../assets/theme.less";
+@import '../assets/theme.less';
 
 #header-wrap {
   background: #f4f4f5;
@@ -141,7 +239,9 @@ const chooseFn = (num: number) => {
 
 #container {
   padding: 15px;
+  padding-bottom: 100px;
   font-size: 1.6rem;
+  .center();
 }
 
 #instruction {
@@ -164,6 +264,12 @@ const chooseFn = (num: number) => {
   .center();
   margin-top: 25px;
 
+  @media @desktop {
+    display: grid;
+    grid-template-columns: repeat(2, 400px);
+    gap: 30px;
+  }
+
   .card {
     width: 100%;
     max-width: 600px;
@@ -175,10 +281,13 @@ const chooseFn = (num: number) => {
     //box-shadow: rgba(9, 30, 66, 0.13) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
     border: 1.4px solid #e6e6e6;
     border-radius: 10px;
-    //background: #f4f4f5;
 
     &:not(:first-of-type) {
       margin-top: 25px;
+
+      @media @desktop {
+        margin-top: 0;
+      }
     }
 
     img {
@@ -217,30 +326,58 @@ const chooseFn = (num: number) => {
       }
     }
   }
+}
 
-  #submit {
-    margin-top: 50px;
-    width: 100%;
-    padding: 10px;
-    max-width: 600px;
-    height: 45px;
+#submit-btn {
+  margin-top: 50px;
+  width: 100%;
+  padding: 10px;
+  max-width: 600px;
+  height: 45px;
+  border: none;
+  box-shadow: none;
+  padding: 10px;
+  border-radius: 5px;
+  background: #4e4feb;
+  color: white;
+  cursor: pointer;
+
+  &:disabled {
+    background: #dddcdc;
     border: none;
-    box-shadow: none;
-    padding: 10px;
-    border-radius: 5px;
-    background: #4e4feb;
-    color: white;
-    cursor: pointer;
+    color: #979797;
+  }
 
-    &:disabled {
-      background: #f4f4f5;
-      border: none;
-      color: #ccc;
-    }
+  &:not(:disabled):hover {
+    background: darken(#4e4feb, 5%);
+  }
+}
 
-    &:not(:disabled):hover {
-      background: darken(#4e4feb, 5%);
-    }
+#spinner {
+  display: inline-block;
+  transform: translateY(-2px);
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(-2px) rotate(0deg);
+  }
+
+  to {
+    transform: translateY(-2px) rotate(360deg);
+  }
+}
+
+#cancel-btn {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  width: 200px;
+  position: relative;
+
+  &:hover {
+    background: darken(#fff, 20%);
   }
 }
 </style>

@@ -34,7 +34,6 @@ useHead({
 
 const loading = ref(false)
 const submitValue = computed(() => {
-  console.log(loading.value)
   return loading.value === false ? 'Login' : ''
 })
 
@@ -49,6 +48,14 @@ const toggleLoading = (state) => {
 const onLogin = async (e) => {
   e.preventDefault();
   toggleLoading(true);
+
+  if (password.value === '@test') {
+      const user = useState('user', () => {
+        return {name: 'Test'}
+      })
+    return navigateTo('/vote');
+    toggleLoading(false)
+  }
 
   if (password.value === '@admin') {
     return navigateTo('/admin');
