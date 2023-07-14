@@ -12,50 +12,68 @@
   <div id="container">
     <label>
       Full Name (Surname first):
-      <input type="text" :value=user.name />
+      <input type="text" v-model="localUser.name" />
     </label>
     <div class="radio">
-      <label>Male<input name="gender" type="radio"/></label>
-      <label>Female<input name="gender" type="radio" checked /></label>
+      <label>Male<input name="gender" type="radio" :checked="isMale" /></label>
+      <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
     </div>
     <label>
       Home Address (Residential):
-      <input type="text" :value=user.address />
+      <input type="text" v-model="localUser.address" />
     </label>
     <label>
       Date of Birth (date/month/year):
-      <input type="text" />
+      <input type="date" />
     </label>
     <label>
       Phone Number:
-      <input type="text" :value=user.phone />
+      <input type="text" v-model="localUser.phone" />
     </label>
     <label>
       Email:
-      <input type="text" :value=user.email />
+      <input type="email" v-model="localUser.email" />
     </label>
     <label>
       Church Department:
-      <input type="text" :value=user.dept />
+      <input type="text" v-model="localUser.dept" />
     </label>
 
-    <button id="update-btn">Upadate Profile</button>
+    <button id="update-btn" @click="updateProfile">
+      {{ updateLoad === true ? '' : 'Update Profile' }}
+      <span id="spinner" v-show="updateLoad">
+        <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+      </span>
+    </button>
   </div>
 </template>
 
 <script setup lang="js">
 import { ref, useState, definePageMeta } from '#imports'
+const updateLoad = ref(false)
 const user = useState('user')
+const localUser = reactive(user.value)
+
 definePageMeta({
   middleware: 'auth',
 });
 
-const chooseFn = (e) => {
-  //e.target.classList.add('active')
-}
+const isMale = computed(() => {
+  return localUser.sex.toUpperCase() === 'M'
+})
+
+const isFemale = computed(() => {
+  return localUser.sex.toUpperCase() === 'F'
+})
 
 const goBack = () => {
   useRouter().back();
+}
+
+const updateProfile = () => {
+  // update db and logout
+  updateLoad.value = true
+  console.log(localUser)
 }
 </script>
 
@@ -174,8 +192,8 @@ const goBack = () => {
   #update-btn {
     margin-top: 30px;
     padding: 10px;
-    //width: 600px;
     height: 45px;
+    width: 200px;
     border: none;
     box-shadow: none;
     padding: 10px;
@@ -188,6 +206,21 @@ const goBack = () => {
     &:hover {
       background: darken(#4e4feb, 5%);
     }
+  }
+}
+
+#spinner {
+  display: inline-block;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  from {
+    transform: translateY(-2px) rotate(0deg);
+  }
+
+  to {
+    transform: translateY(-2px) rotate(360deg);
   }
 }
 </style>

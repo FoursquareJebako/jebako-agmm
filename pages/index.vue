@@ -51,7 +51,7 @@ const onLogin = async (e) => {
 
   if (password.value === '@test') {
       const user = useState('user', () => {
-        return {name: 'Test'}
+        return {name: 'Test', phone: '080', sex: 'M'}
       })
     return navigateTo('/vote');
     toggleLoading(false)
