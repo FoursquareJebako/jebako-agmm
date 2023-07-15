@@ -24,7 +24,6 @@
 <script setup lang="js">
 let err = ref(false);
 const password = ref()
-const userState = useState('password', () => password);
 const supabase = useSupabaseClient();
 
 useHead({
@@ -47,19 +46,28 @@ const toggleLoading = (state) => {
 
 const onLogin = async (e) => {
   e.preventDefault();
+  clearNuxtState('user')
   toggleLoading(true);
 
   if (password.value === '@test') {
-      const user = useState('user', () => {
-        return {name: 'Test', phone: '080', sex: 'M'}
-      })
-    return navigateTo('/vote');
+    const user = useState('user', () => {
+      return { name: 'Test', phone: '080', sex: 'M' }
+    })
     toggleLoading(false)
+    return navigateTo('/vote');
+  }
+
+  if (password.value === '@test2') {
+    const user = useState('user', () => {
+      return { name: 'Ransome-kuti Bukunmi', phone: '070', sex: 'F' }
+    })
+    toggleLoading(false)
+    return navigateTo('/vote');
   }
 
   if (password.value === '@admin') {
-    return navigateTo('/admin');
     toggleLoading(false)
+    return navigateTo('/admin');
   }
 
   if (password.value && password.value.length === 6) {
@@ -79,7 +87,7 @@ const onLogin = async (e) => {
 };
 
 const getData = async () => {
-  const { data, error } = await supabase.from('members').select().eq('id', Number(password.value)).single();
+  const { data, error } = await supabase.from('members').select().eq('id', password.value).single();
   if (error) {
     //console.log('Error:', error, typeof(password.value))
     return false
@@ -181,6 +189,7 @@ form {
     from {
       transform: translate(-50%, -50%) rotate(0deg);
     }
+
     to {
       transform: translate(-50%, -50%) rotate(360deg);
     }

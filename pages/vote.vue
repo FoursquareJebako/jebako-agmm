@@ -57,6 +57,8 @@ const submitState = reactive({
   confirm: false
 })
 
+console.log(user.value)
+
 onMounted(() => {
   isDisabled()
 })
@@ -227,7 +229,6 @@ const cancelVote = () => {
     display: inline-block;
     //background: #e4e4e7;
     background: rgba(255, 255, 255, 0.4);
-    border-radius: 16px;
     //box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border: 1px solid #ccc;
@@ -273,10 +274,12 @@ const cancelVote = () => {
   .card {
     width: 100%;
     max-width: 600px;
-    display: flex;
-    justify-content: space-evenly;
+    min-height: 150px;
+    display: grid;
+    align-items: center;
     padding: 15px;
-    gap: 0 20px;
+    gap: 0 10px;
+    grid-template-columns: 100px 1fr;
     //box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     //box-shadow: rgba(9, 30, 66, 0.13) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
     border: 1.4px solid #e6e6e6;
@@ -300,7 +303,7 @@ const cancelVote = () => {
     .content {
       display: flex;
       flex-direction: column;
-      flex: 0 0 200px;
+      max-width: 350px;
       //background: red;
       text-align: center;
       justify-content: center;
@@ -314,7 +317,7 @@ const cancelVote = () => {
     button {
       width: 150px;
       margin-top: 10px;
-      padding: 10px;
+      padding: 7px;
       outline: none;
       border-radius: 3px;
       background: transparent;
@@ -329,7 +332,7 @@ const cancelVote = () => {
 }
 
 #submit-btn {
-  margin-top: 50px;
+  margin-top: 30px;
   width: 100%;
   padding: 10px;
   max-width: 600px;
