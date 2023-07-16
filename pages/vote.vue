@@ -12,7 +12,7 @@
       </p>
       <p class="status" :class="{ active: show === 'true' }">
         <span v-if="show === 'true'">
-          <Icon name="solar:user-vote" size="3rem" color="#65ca65" />
+          <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
         </span>
         {{ voteStatus }}
       </p>
