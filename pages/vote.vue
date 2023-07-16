@@ -10,16 +10,16 @@
       <p class="text">
         Welcome,<br /><span id="name">{{ user.name }}</span>
       </p>
-      <p class="status" :class="{ active: vote.status }">
-        <span v-if="vote.status">
-          <Icon name="solar:user-bold-duotone" size="3rem" color="#65ca65" />
+      <p class="status" :class="{ active: show === 'true' }">
+        <span v-if="show === 'true'">
+          <Icon name="solar:user-vote" size="3rem" color="#65ca65" />
         </span>
         {{ voteStatus }}
       </p>
     </div>
   </div>
 
-  <div id="vote-summary" v-if="vote.status">
+  <div id="vote-summary" v-if="show === 'true'">
     <h4>Thanks for voting</h4>
     <p>Click the button below to see reult after voting ends.</p>
     <button disabled>See result</button>
@@ -69,10 +69,12 @@ const submitState = reactive({
   confirm: false
 })
 
-console.log(vote.value.status)
+const local = localStorage.getItem('vote')
+const show = ref(local)
+console.log(typeof (local), show.value)
 
 onMounted(() => {
-  if (!vote.value.status) {
+  if (!vote.status) {
     isDisabled()
   }
 })
@@ -119,7 +121,7 @@ definePageMeta({
 });
 
 const voteStatus = computed(() => {
-  return vote.value.status ? 'Voted' : 'Yet to vote'
+  return show === 'true' ? 'Voted' : 'Yet to vote'
 })
 
 const selected = computed(() => {
@@ -167,14 +169,36 @@ const chooseFn = (contestant) => {
 
 const submitVote = () => {
   if (submitState.confirm) {
-    //final submit
     submitState.confirm = false
     submitState.loading = true
     submitBtn.value.disabled = true
     selectBtn.value.disabled = true
+    //final submit
+    setTimeout(() => {
+      localStorage.setItem('vote', true)
+      const n = getName()
+      const t = `${Date.UTC('hours')} ${Date.UTC('minutes')}`
+      localStorage.setItem('voter', `{
+        name: ${n},
+        password: 123456,
+        time: ${t}
+      }`)
+      submitState.loading = false
+      show.value = 'true'
+    }, 2000)
   } else if (!submitState.confirm) {
     submitState.confirm = true
   }
+}
+
+const getName = () => {
+  const name = []
+  for (const x of contestants.value) {
+    if (x.selected) {
+      name.push = x.name
+    }
+  }
+  return name
 }
 
 const cancelVote = () => {

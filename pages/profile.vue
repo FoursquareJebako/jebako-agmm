@@ -73,6 +73,9 @@ const goBack = () => {
 const updateProfile = () => {
   // update db and logout
   updateLoad.value = true
+  setTimeout(() => {
+      updateLoad = false
+    }, 1000)
   console.log(localUser)
 }
 </script>

@@ -37,8 +37,8 @@ useHead({
 
 const errType = computed(() => {
   return err.type === 'network' ?
-  'Network Error. Please try again' :
-  'Wrong Password. No record found'
+    'Network Error. Please try again' :
+    'Wrong Password. No record found'
 })
 
 const submitValue = computed(() => {
@@ -58,15 +58,21 @@ const onLogin = async (e) => {
   clearNuxtState(['user, vote'])
   toggleLoading(true);
 
-  if (password.value === '@test') {
+  if (password.value === '123456') {
     useState('user', () => {
-      return { name: 'Test', phone: '080', sex: 'M' }
+      return { name: 'Temiloluwa John Victor', phone: '08123456789', sex: 'M' }
     })
-    useState('vote', () => {
-      return { 'status': true }
-    })
-    toggleLoading(false)
-    return navigateTo('/vote');
+    /* useState('vote', () => {
+      return { 'status': false }
+    }) */
+    console.log(localStorage.getItem('vote'))
+    if (!localStorage.getItem('vote')) {
+      localStorage.setItem('vote', false)
+    }
+    setTimeout(() => {
+      toggleLoading(false)
+      return navigateTo('/vote');
+    }, 1500)
   }
 
   if (password.value === '@admin') {
@@ -75,27 +81,28 @@ const onLogin = async (e) => {
   }
 
   if (password.value && password.value.length === 6) {
-    let data = await getData();
+    /* let data = await getData();
     if (data) {
       let vote = await getVote()
       if (vote) {
-        const user = useState('user', () => data)
-        const voteState = useState('vote', () => {
+        useState('user', () => data)
+        useState('vote', () => {
           status: vote.status || true;
           timestamp: vote.timestamp || false;
           candidates: vote.candidates || false
         })
+        console.log(useState('vote'))
         return navigateTo('/vote')
       } else {
         toggleLoading(false)
         err.status = true
         err.type = 'network'
       }
-    }
+    } */
 
-    toggleLoading(false)
+    /* toggleLoading(false)
     err.status = true
-    err.type = 'password'
+    err.type = 'password' */
   } else {
     toggleLoading(false)
     err.status = 'password'

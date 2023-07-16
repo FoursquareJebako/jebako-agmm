@@ -52,22 +52,22 @@ const contestants = ref([
   {
     image: '../img/user1.jpg',
     name: 'Mary Joe',
-    votes: 100,
+    votes: 62,
   },
   {
     image: '../img/user2.jpg',
     name: 'Akindele Ayomide Jesutofunmi Joshua',
-    votes: 100,
+    votes: 40,
   },
   {
     image: '../img/user1.jpg',
     name: 'Taiwo Emmanuel',
-    votes: 100,
+    votes: 60,
   },
   {
     image: '../img/user2.jpg',
     name: 'Abimbola Joseph',
-    votes: 100,
+    votes: 43,
   },
 ]);
 
