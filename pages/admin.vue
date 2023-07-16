@@ -29,39 +29,25 @@
 
     <div id="voters-wrapper">
       <h3>All Voters</h3>
-      <table>
-        <thead>
-          <td>Password</td>
-          <td>Name</td>
-          <td>Votes</td>
-          <td>Timestamp</td>
-        </thead>
-        <tbody>
-          <tr>
-            <td>@test</td>
-            <td>*****</td>
-            <td>MJ, TE, AJ</td>
-            <td>12:05pm</td>
-          </tr>
-          <tr>
-            <td>25RJ82</td>
-            <td>*****</td>
-            <td>Ayomide Jesutofunmi, Taiwo Emmanuel, Abimbola Joseph</td>
-            <td>12:05pm</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="mobile-table">
-        <p>123456</p>
-        <p>Ayomide Jesutofunmi, Taiwo Emmanuel, Abimbola Joseph</p>
-        <p><Icon name="fluent:arrow-fit-20-regular" size="3rem"></Icon></p>
-      </div>
+      <details>
+        <summary class="mobile-table">
+          <p class="pw">123456</p>
+          <p class="ts">12:34pm WAT</p>
+          <p class="view">View <Icon name="fluent:arrow-fit-20-regular" size="3rem"></Icon>
+          </p>
+        </summary>
+        <div class="details">
+          <p>Mary Joe</p>
+          <p>Taiwo Emmanuel</p>
+          <p>Akindele Ayomide Jesutofunmi Joshua</p>
+        </div>
+      </details>
     </div>
   </div>
 </template>
 
 <script setup>
+
 const contestants = ref([
   {
     image: '../img/user1.jpg',
@@ -102,10 +88,12 @@ const totalVotes = computed(() => {
   display: flex;
   justify-content: space-between;
   padding: 20px 20px;
+
   .title {
     display: flex;
     flex-direction: column;
   }
+
   .head {
     font-size: 2.5rem;
     font-weight: 700;
@@ -124,12 +112,12 @@ const totalVotes = computed(() => {
     padding: 15px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 10px;
-    font-size: 2rem;
+    font-size: 1.8rem;
 
     p {
       display: inline-block;
       margin-top: 7px;
-      background: lightgreen;
+      background: rgb(192, 255, 192);
       padding: 3px 20px;
       border-radius: 20px;
     }
@@ -176,15 +164,16 @@ const totalVotes = computed(() => {
 
     .details {
       max-width: 350px;
+
       .name {
-        font-weight: 700;
-        font-size: 1.8rem;
+        font-weight: 500;
+        font-size: 1.7rem;
       }
 
       .votes {
         display: inline-block;
         font-size: 1.7rem;
-        margin-top: 7px;
+        margin-top: 12px;
         background: #f2f2f2;
         padding: 3px 15px;
         border-radius: 20px;
@@ -199,43 +188,50 @@ const totalVotes = computed(() => {
   padding: 15px;
 
   h3 {
-    text-align: center
+    font-weight: 500;
   }
 
   @media @desktop {
     .center();
   }
 
-  table {
+  details {
+    margin-top: 20px;
     width: 100%;
-    max-width: 1000px;
-    margin-top: 10px;
-    font-size: 1.6rem;
-    border-radius: 10px;
+    max-width: 500px;
 
-    thead td {
-      font-size: 1.8rem;
-      font-weight: 500;
-      word-break: keep-all;
-      background: none;
-    }
-
-    td {
-      width: 100px;
-      margin: 0 10px;
-      word-wrap: break-word;
-      word-break: break-all;
-      padding: 10px 5px;
-      background: #f2f2f2;
+    .details {
+      background: #f1f1f2;
+      padding: 15px;
+      padding-top: 5px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
     }
   }
 
   .mobile-table {
     display: grid;
-    grid-template-columns: 50px 1fr 100px;
-    gap: 0 20px;
+    grid-template-columns: auto auto 1fr;
+    gap: 0 10px;
     align-items: center;
     justify-content: center;
+    background: #f1f1f2;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+
+    .pw,
+    .ts {
+      background: #fff;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      padding: 3px 15px;
+    }
+
+    .view {
+      //background: red;
+      text-align: right;
+    }
   }
 }
 </style>

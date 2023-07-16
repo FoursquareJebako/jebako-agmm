@@ -9,7 +9,7 @@
       <form @submit="onLogin">
         <label for="pw">Password</label>
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
-        <p id="error" v-show="err">Wrong Password. No record found</p>
+        <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
           <input id="submit-btn" type="submit" :value="submitValue" />
           <span id="spinner" v-show="loading">
@@ -22,8 +22,12 @@
 </template>
 
 <script setup lang="js">
-let err = ref(false);
 const password = ref()
+const loading = ref(false)
+let err = reactive({
+  status: false,
+  type: 'password'
+})
 const supabase = useSupabaseClient();
 
 useHead({
@@ -31,7 +35,12 @@ useHead({
   meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
 });
 
-const loading = ref(false)
+const errType = computed(() => {
+  return err.type === 'network' ?
+  'Network Error. Please try again' :
+  'Wrong Password. No record found'
+})
+
 const submitValue = computed(() => {
   return loading.value === false ? 'Login' : ''
 })
@@ -46,20 +55,15 @@ const toggleLoading = (state) => {
 
 const onLogin = async (e) => {
   e.preventDefault();
-  clearNuxtState('user')
+  clearNuxtState(['user, vote'])
   toggleLoading(true);
 
   if (password.value === '@test') {
-    const user = useState('user', () => {
+    useState('user', () => {
       return { name: 'Test', phone: '080', sex: 'M' }
     })
-    toggleLoading(false)
-    return navigateTo('/vote');
-  }
-
-  if (password.value === '@test2') {
-    const user = useState('user', () => {
-      return { name: 'Ransome-kuti Bukunmi', phone: '070', sex: 'F' }
+    useState('vote', () => {
+      return { 'status': true }
     })
     toggleLoading(false)
     return navigateTo('/vote');
@@ -73,26 +77,48 @@ const onLogin = async (e) => {
   if (password.value && password.value.length === 6) {
     let data = await getData();
     if (data) {
-      const user = useState('user', () => data)
-      await navigateTo('/vote')
-      return;
+      let vote = await getVote()
+      if (vote) {
+        const user = useState('user', () => data)
+        const voteState = useState('vote', () => {
+          status: vote.status || true;
+          timestamp: vote.timestamp || false;
+          candidates: vote.candidates || false
+        })
+        return navigateTo('/vote')
+      } else {
+        toggleLoading(false)
+        err.status = true
+        err.type = 'network'
+      }
     }
 
     toggleLoading(false)
-    err.value = true
+    err.status = true
+    err.type = 'password'
   } else {
     toggleLoading(false)
-    err.value = true
+    err.status = 'password'
   }
 };
 
 const getData = async () => {
   const { data, error } = await supabase.from('members').select().eq('id', password.value).single();
   if (error) {
-    //console.log('Error:', error, typeof(password.value))
     return false
   }
   return data
+}
+
+const getVote = async () => {
+  const { data, error } = await supabase.from('voters').select().eq('id', password.value).single();
+  if (data === null && error.hint === null) {
+    return { status: false }
+  } else if (error) {
+    return false
+  } else {
+    return data
+  }
 }
 </script>
 

@@ -10,11 +10,22 @@
       <p class="text">
         Welcome,<br /><span id="name">{{ user.name }}</span>
       </p>
-      <p class="status">Yet to vote</p>
+      <p class="status" :class="{ active: vote.status }">
+        <span v-if="vote.status">
+          <Icon name="solar:user-bold-duotone" size="3rem" color="#65ca65" />
+        </span>
+        {{ voteStatus }}
+      </p>
     </div>
   </div>
 
-  <div id="container">
+  <div id="vote-summary" v-if="vote.status">
+    <h4>Thanks for voting</h4>
+    <p>Click the button below to see reult after voting ends.</p>
+    <button disabled>See result</button>
+  </div>
+
+  <div id="container" v-else>
     <div id="instruction">
       <div>
         <h4>You can only vote three cadidates</h4>
@@ -50,6 +61,7 @@
 <script setup lang="js">
 import { ref, useState, definePageMeta } from '#imports';
 const user = useState('user');
+const vote = useState('vote');
 const submitBtn = ref(null);
 const selectBtn = ref(null);
 const submitState = reactive({
@@ -57,10 +69,12 @@ const submitState = reactive({
   confirm: false
 })
 
-console.log(user.value)
+console.log(vote.value.status)
 
 onMounted(() => {
-  isDisabled()
+  if (!vote.value.status) {
+    isDisabled()
+  }
 })
 
 /* interface C {
@@ -103,6 +117,10 @@ const contestants = ref([
 definePageMeta({
   middleware: 'auth',
 });
+
+const voteStatus = computed(() => {
+  return vote.value.status ? 'Voted' : 'Yet to vote'
+})
 
 const selected = computed(() => {
   const all = []
@@ -235,14 +253,59 @@ const cancelVote = () => {
     padding: 7px 30px;
     text-align: center;
     border-radius: 5px;
+
+    &.active {
+      background: rgb(205, 241, 205);
+      border: 1px solid #65ca65;
+    }
+  }
+}
+
+#vote-summary {
+  .center();
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: center;
+
+  h4 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin-top: 5px
+  }
+
+  button {
+    .center();
+    width: 200px;
+    height: 40px;
+    border: none;
+    box-shadow: none;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background: #4e4feb;
+    color: white;
+    cursor: pointer;
+
+    &:disabled {
+      background: #dddcdc;
+      border: none;
+      color: #979797;
+    }
+
+    &:not(:disabled):hover {
+      background: darken(#4e4feb, 5%);
+    }
   }
 }
 
 #container {
+  .center();
   padding: 15px;
   padding-bottom: 100px;
   font-size: 1.6rem;
-  .center();
 }
 
 #instruction {
