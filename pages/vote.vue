@@ -10,8 +10,8 @@
       <p class="text">
         Welcome,<br /><span id="name">{{ user.name }}</span>
       </p>
-      <p class="status" :class="{ active: show === 'true' }">
-        <span v-if="show === 'true'">
+      <p class="status" :class="{ active: isLocalVote === 'true' }">
+        <span v-if="isLocalVote === 'true'">
           <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
         </span>
         {{ voteStatus }}
@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div id="vote-summary" v-if="show === 'true'">
+  <div id="vote-summary" v-if="isLocalVote === 'true'">
     <h4>Thanks for voting</h4>
     <p>Click the button below to see reult after voting ends.</p>
     <button disabled>See result</button>
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <button ref="submitBtn" id="submit-btn" @click="submitVote">
+    <button :disabled=isDisabled id="submit-btn" @click="submitVote">
       {{ getSubmitState }}
       <span id="spinner" v-show="submitState.loading">
         <Icon name="mingcute:loading-fill" color="white" size="3rem" />
@@ -62,28 +62,18 @@
 import { ref, useState, definePageMeta } from '#imports';
 const user = useState('user');
 const vote = useState('vote');
-const submitBtn = ref(null);
 const selectBtn = ref(null);
 const submitState = reactive({
   loading: false,
   confirm: false
 })
 
-const local = localStorage.getItem('vote')
-const show = ref(local)
-console.log(typeof (local), show.value)
+const isLocalVote = ref(localStorage.getItem('vote'))
 
-onMounted(() => {
-  if (!vote.status) {
-    isDisabled()
-  }
-})
-
-/* interface C {
-  image: string;
-  name: string;
-  selected: boolean
-} */
+console.log(user.value)
+if (localStorage.getItem('voter')) {
+  console.log(JSON.parse(localStorage.getItem('voter')))
+}
 
 const contestants = ref([
   {
@@ -108,20 +98,12 @@ const contestants = ref([
   },
 ]);
 
-/* interface User {
-  name: string;
-  sex: string;
-  address: string;
-  phone: string;
-  email: string;
-} */
-
 definePageMeta({
   middleware: 'auth',
 });
 
 const voteStatus = computed(() => {
-  return show === 'true' ? 'Voted' : 'Yet to vote'
+  return isLocalVote.value === 'true' ? 'Voted successfully' : 'Yet to vote'
 })
 
 const selected = computed(() => {
@@ -144,14 +126,16 @@ const getSubmitState = computed(() => {
   }
 })
 
-const isDisabled = () => {
+const isDisabled = computed(() => {
   const selectedLen = selected.value.length
-  if (selectedLen === 3) {
-    submitBtn.value.disabled = false
-  } else {
-    submitBtn.value.disabled = true
+  if (submitState.loading) {
+    return true
+  } else if (selectedLen === 3) {
+    return false
   }
-}
+
+  return true
+})
 
 const chooseFn = (contestant) => {
   if (selectBtn.value.disabled) {
@@ -163,7 +147,6 @@ const chooseFn = (contestant) => {
   } else if (selected.value.length < 3) {
     contestant.selected = !contestant.selected
   }
-  isDisabled()
   //console.log(selected.value)
 };
 
@@ -171,22 +154,24 @@ const submitVote = () => {
   if (submitState.confirm) {
     submitState.confirm = false
     submitState.loading = true
-    submitBtn.value.disabled = true
     selectBtn.value.disabled = true
     //final submit
+    const date = new Date()
+    const day = date.toLocaleString('en-US', {weekday: 'short'})
+    const time = date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})
     setTimeout(() => {
+      const voter = {
+        name: getName(),
+        password: user.id,
+        timestamp: `${day}, ${time}`
+      }
       localStorage.setItem('vote', true)
-      const n = getName()
-      const t = `${Date.UTC('hours')} ${Date.UTC('minutes')}`
-      localStorage.setItem('voter', `{
-        name: ${n},
-        password: 123456,
-        time: ${t}
-      }`)
+      localStorage.setItem('voter', JSON.stringify(voter))
       submitState.loading = false
-      show.value = 'true'
+      isLocalVote.value = 'true'
     }, 2000)
   } else if (!submitState.confirm) {
+    console.log(getName())
     submitState.confirm = true
   }
 }
@@ -195,7 +180,7 @@ const getName = () => {
   const name = []
   for (const x of contestants.value) {
     if (x.selected) {
-      name.push = x.name
+      name.push(x.name)
     }
   }
   return name
@@ -208,7 +193,6 @@ const cancelVote = () => {
     }
   }
   submitState.confirm = false
-  isDisabled()
 }
 </script>
 

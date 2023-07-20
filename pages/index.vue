@@ -11,7 +11,7 @@
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
-          <input id="submit-btn" type="submit" :value="submitValue" />
+          <input id="submit-btn" type="submit" :value="submitValue" :disabled=submitDisabled />
           <span id="spinner" v-show="loading">
             <Icon name="mingcute:loading-fill" color="white" size="30px" />
           </span>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="js">
+
 const password = ref()
 const loading = ref(false)
 let err = reactive({
@@ -41,6 +42,10 @@ const errType = computed(() => {
     'Wrong Password. No record found'
 })
 
+const submitDisabled = computed(() => {
+  return loading.value ? true : false
+})
+
 const submitValue = computed(() => {
   return loading.value === false ? 'Login' : ''
 })
@@ -53,79 +58,87 @@ const toggleLoading = (state) => {
   }
 }
 
-const onLogin = async (e) => {
-  e.preventDefault();
-  clearNuxtState(['user, vote'])
-  toggleLoading(true);
-
-  if (password.value === '123456') {
+const specialLogin = (login) => {
+  if (login === 'demo') {
     useState('user', () => {
-      return { name: 'Temiloluwa John Victor', phone: '08123456789', sex: 'M' }
+      return { name: 'Temiloluwa John Victor', phone: '08123456789', sex: 'M', id: password.value }
     })
-    /* useState('vote', () => {
-      return { 'status': false }
-    }) */
     console.log(localStorage.getItem('vote'))
     if (!localStorage.getItem('vote')) {
       localStorage.setItem('vote', false)
     }
-    setTimeout(() => {
+    setTimeout(async () => {
+      await navigateTo('/vote');
       toggleLoading(false)
-      return navigateTo('/vote');
     }, 1500)
+
   }
 
-  if (password.value === '@admin') {
-    toggleLoading(false)
+  if (login === 'admin') {
     return navigateTo('/admin');
+    toggleLoading(false)
   }
+}
+
+const onLogin = async (e) => {
+  e.preventDefault();
+  clearNuxtState(['user', 'vote'])
+  toggleLoading(true);
 
   if (password.value && password.value.length === 6) {
-    /* let data = await getData();
-    if (data) {
-      let vote = await getVote()
-      if (vote) {
-        useState('user', () => data)
-        useState('vote', () => {
-          status: vote.status || true;
-          timestamp: vote.timestamp || false;
-          candidates: vote.candidates || false
-        })
-        console.log(useState('vote'))
-        return navigateTo('/vote')
-      } else {
-        toggleLoading(false)
-        err.status = true
-        err.type = 'network'
-      }
-    } */
+    if (password.value === '123456') {
+      specialLogin('demo')
+      return
+    } else if (password.value === '@admin') {
+      specialLogin('admin')
+      return
+    }
 
-    /* toggleLoading(false)
-    err.status = true
-    err.type = 'password' */
+    let { user, vote } = await getUser();
+    if (user && (vote || vote === false)) {
+      useState('user', () => { return user })
+      useState('vote', () => { return vote })
+      return navigateTo('/vote')
+    }
+
+    if (!user) {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'password'
+    }
+
+    if (vote === null) {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'network'
+    }
   } else {
     toggleLoading(false)
-    err.status = 'password'
+    err.status = true
+    err.type = 'password'
   }
 };
 
-const getData = async () => {
-  const { data, error } = await supabase.from('members').select().eq('id', password.value).single();
-  if (error) {
-    return false
+const getUser = async () => {
+  const re = { user: false, vote: false }
+  const { data: userData, error: userError } = await supabase.from('members').select().eq('id', password.value).single();
+  if (userError) {
+    return re
   }
-  return data
-}
 
-const getVote = async () => {
-  const { data, error } = await supabase.from('voters').select().eq('id', password.value).single();
-  if (data === null && error.hint === null) {
-    return { status: false }
-  } else if (error) {
-    return false
+  re.user = userData
+  const { data: voteData, error: voteError } = await supabase.from('voters').select().eq('id', password.value).single();
+  if (voteData === null && voteError.hint === null) {
+    // yet to vote
+    re.vote = false
+  } else if (voteError) {
+    //network
+    re.vote = null
   } else {
-    return data
+    re.vote = data
   }
+
+  return re
 }
 </script>
 
@@ -241,7 +254,13 @@ form {
     color: white;
     cursor: pointer;
 
-    &:hover {
+    &:disabled {
+      background: #dddcdc;
+      border: none;
+      color: #979797;
+    }
+
+    &:not(:disabled):hover {
       background: darken(#4e4feb, 5%);
     }
   }
