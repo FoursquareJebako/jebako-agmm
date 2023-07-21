@@ -10,8 +10,8 @@
       <p class="text">
         Welcome,<br /><span id="name">{{ user.name }}</span>
       </p>
-      <p class="status" :class="{ active: isLocalVote === 'true' }">
-        <span v-if="isLocalVote === 'true'">
+      <p class="status" :class="{ active: hasVoted }">
+        <span v-if="hasVoted">
           <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
         </span>
         {{ voteStatus }}
@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div id="vote-summary" v-if="isLocalVote === 'true'">
+  <div id="vote-summary" v-if="hasVoted">
     <h4>Thanks for voting</h4>
     <p>Click the button below to see reult after voting ends.</p>
     <button disabled>See result</button>
@@ -67,13 +67,21 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
+const supabase = useSupabaseClient();
 
 const isLocalVote = ref(localStorage.getItem('vote'))
-
-console.log(user.value)
+console.log(user.value, isLocalVote.value)
 if (localStorage.getItem('voter')) {
   console.log(JSON.parse(localStorage.getItem('voter')))
 }
+
+const hasVoted = computed(() => {
+  if (user.value.id === '123456') {
+    return isLocalVote.value === 'true'
+  } else {
+    return vote.value
+  }
+})
 
 const contestants = ref([
   {
@@ -150,29 +158,45 @@ const chooseFn = (contestant) => {
   //console.log(selected.value)
 };
 
-const submitVote = () => {
+const submitVote = async () => {
   if (submitState.confirm) {
     submitState.confirm = false
     submitState.loading = true
     selectBtn.value.disabled = true
     //final submit
     const date = new Date()
-    const day = date.toLocaleString('en-US', {weekday: 'short'})
-    const time = date.toLocaleString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true})
-    setTimeout(() => {
-      const voter = {
-        name: getName(),
-        password: user.id,
-        timestamp: `${day}, ${time}`
-      }
-      localStorage.setItem('vote', true)
-      localStorage.setItem('voter', JSON.stringify(voter))
-      submitState.loading = false
-      isLocalVote.value = 'true'
-    }, 2000)
+    const day = date.toLocaleString('en-US', { weekday: 'short' })
+    const time = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+    const voter = {
+      id: user.value.id,
+      candidates: getName(),
+      timestamp: `${day}, ${time}`
+    }
+    await handleSubmit(voter)
+    submitState.loading = false
+    isLocalVote.value = 'true'
   } else if (!submitState.confirm) {
     console.log(getName())
     submitState.confirm = true
+  }
+}
+
+const handleSubmit = async (voter) => {
+  if (user.value.id === '123456') {
+    console.log('TEST: Use localStorage')
+    setTimeout(() => {
+      localStorage.setItem('vote', true)
+      localStorage.setItem('voter', JSON.stringify(voter))
+    }, 2000)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+  } else {
+    const { data, error } = await supabase.from('voters').insert(voter).select()
+    if (error) {
+      console.log(error)
+      return
+    }
+    clearNuxtState('vote')
+    useState('vote', () => data)
   }
 }
 
@@ -183,7 +207,7 @@ const getName = () => {
       name.push(x.name)
     }
   }
-  return name
+  return name.join(',')
 }
 
 const cancelVote = () => {

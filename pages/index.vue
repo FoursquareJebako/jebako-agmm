@@ -63,8 +63,7 @@ const specialLogin = (login) => {
     useState('user', () => {
       return { name: 'Temiloluwa John Victor', phone: '08123456789', sex: 'M', id: password.value }
     })
-    console.log(localStorage.getItem('vote'))
-    if (!localStorage.getItem('vote')) {
+    if (localStorage.getItem('vote') === null) {
       localStorage.setItem('vote', false)
     }
     setTimeout(async () => {
@@ -96,8 +95,8 @@ const onLogin = async (e) => {
 
     let { user, vote } = await getUser();
     if (user && (vote || vote === false)) {
-      useState('user', () => { return user })
-      useState('vote', () => { return vote })
+      useState('user', () => user)
+      useState('vote', () => vote)
       return navigateTo('/vote')
     }
 
@@ -135,7 +134,7 @@ const getUser = async () => {
     //network
     re.vote = null
   } else {
-    re.vote = data
+    re.vote = voteData
   }
 
   return re
