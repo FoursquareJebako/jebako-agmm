@@ -61,7 +61,7 @@ const toggleLoading = (state) => {
 const specialLogin = (login) => {
   if (login === 'demo') {
     useState('user', () => {
-      return { name: 'Temiloluwa John Victor', phone: '08123456789', sex: 'M', id: password.value }
+      return { name: 'Demo Account', phone: '08123456789', sex: 'M', id: password.value }
     })
     if (localStorage.getItem('vote') === null) {
       localStorage.setItem('vote', false)
@@ -122,6 +122,7 @@ const getUser = async () => {
   const re = { user: false, vote: false }
   const { data: userData, error: userError } = await supabase.from('members').select().eq('id', password.value).single();
   if (userError) {
+    console.log(userError, userData)
     return re
   }
 

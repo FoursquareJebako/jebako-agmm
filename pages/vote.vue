@@ -19,9 +19,11 @@
     </div>
   </div>
 
+  <p v-if="isDemo" id="demo-warn">Voting on Demo account won't be counted.</p>
+
   <div id="vote-summary" v-if="hasVoted">
     <h4>Thanks for voting</h4>
-    <p>Click the button below to see reult after voting ends.</p>
+    <p>Click the button below to see result when voting ends.</p>
     <button disabled>See result</button>
   </div>
 
@@ -77,10 +79,14 @@ if (localStorage.getItem('voter')) {
 
 const hasVoted = computed(() => {
   if (user.value.id === '123456') {
-    return isLocalVote.value === 'true'
+    return isLocalVote.value === 'true' ? true : false
   } else {
-    return vote.value
+    return vote.value ? true : false
   }
+})
+
+const isDemo = computed(() => {
+  return user.value.id === '123456'
 })
 
 const contestants = ref([
@@ -111,7 +117,7 @@ definePageMeta({
 });
 
 const voteStatus = computed(() => {
-  return isLocalVote.value === 'true' ? 'Voted successfully' : 'Yet to vote'
+  return hasVoted.value ? 'Voted successfully' : 'Yet to vote'
 })
 
 const selected = computed(() => {
@@ -291,6 +297,17 @@ const cancelVote = () => {
       border: 1px solid #65ca65;
     }
   }
+}
+
+#demo-warn {
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-top: 20px;
+  background: lightgoldenrodyellow;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
 }
 
 #vote-summary {
