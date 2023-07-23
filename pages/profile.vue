@@ -55,8 +55,6 @@ const user = useState('user')
 const localUser = reactive(user.value)
 const supabase = useSupabaseClient()
 
-console.log(user.value)
-
 definePageMeta({
   middleware: 'auth',
 });

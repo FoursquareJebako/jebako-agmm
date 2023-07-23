@@ -78,9 +78,9 @@ const portalClosed = ref(true)
 const supabase = useSupabaseClient();
 
 const isLocalVote = ref(localStorage.getItem('vote'))
-console.log(user.value, isLocalVote.value)
+// console.log(user.value, isLocalVote.value)
 if (localStorage.getItem('voter')) {
-  console.log(JSON.parse(localStorage.getItem('voter')))
+  // console.log(JSON.parse(localStorage.getItem('voter')))
 }
 
 const hasVoted = computed(() => {
@@ -188,14 +188,14 @@ const submitVote = async () => {
     submitState.loading = false
     isLocalVote.value = 'true'
   } else if (!submitState.confirm) {
-    console.log(getName())
+    // console.log(getName())
     submitState.confirm = true
   }
 }
 
 const handleSubmit = async (voter) => {
   if (user.value.id === '123456') {
-    console.log('TEST: Use localStorage')
+    // console.log('TEST: Use localStorage')
     setTimeout(() => {
       localStorage.setItem('vote', true)
       localStorage.setItem('voter', JSON.stringify(voter))
@@ -204,7 +204,7 @@ const handleSubmit = async (voter) => {
   } else {
     const { data, error } = await supabase.from('voters').insert(voter).select()
     if (error) {
-      console.log(error)
+      // console.log(error)
       return
     }
     clearNuxtState('vote')

@@ -1,6 +1,6 @@
 <template>
   <div id="header">
-    <div class="title" @click="fetchVoters()">
+    <div class="title">
       <p class="head">Admin Dashboard</p>
       <p>Realtime counts</p>
     </div>
@@ -81,7 +81,7 @@ const { data: voters, refresh: refreshVoters } = await useAsyncData('voters', as
 })
 
 watchEffect(() => {
-  console.log('voters updated')
+  // console.log('voters updated')
   // reset to all votes to zero
   contestants.value.forEach(contestant => {
     contestant.votes = 0
@@ -98,13 +98,6 @@ watchEffect(() => {
     }
   }
 })
-
-console.log(voters.value)
-
-const fetchVoters = async () => {
-  const { data } = await supabase.from('voters').select()
-  console.log(data)
-}
 
 const listContestant = (contestants) => {
   const arr = contestants.split(',')
