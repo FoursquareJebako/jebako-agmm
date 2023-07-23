@@ -55,6 +55,9 @@ const user = useState('user')
 const localUser = reactive(user.value)
 const supabase = useSupabaseClient()
 
+if (!user.value.phone.startsWith('0') && !user.value.phone.startsWith('+')) {
+  user.value.phone = `0${user.value.phone}`
+}
 definePageMeta({
   middleware: 'auth',
 });
