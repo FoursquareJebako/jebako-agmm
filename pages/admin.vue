@@ -1,6 +1,6 @@
 <template>
   <div id="header">
-    <div class="title">
+    <div class="title" @click="fetchVoters()">
       <p class="head">Admin Dashboard</p>
       <p>Realtime counts</p>
     </div>
@@ -11,7 +11,7 @@
 
   <div id="container">
     <div id="totals">
-      <h3>Total Votes</h3>
+      <h3>Total Voters</h3>
       <p>{{ totalVotes }}</p>
     </div>
 
@@ -29,17 +29,19 @@
 
     <div id="voters-wrapper">
       <h3>All Voters</h3>
-      <details>
+
+      <details v-for="voter in voters">
         <summary class="mobile-table">
-          <p class="pw">123456</p>
-          <p class="ts">12:34pm WAT</p>
-          <p class="view">View <Icon name="fluent:arrow-fit-20-regular" size="3rem"></Icon>
+          <p class="pw">{{ voter.id }}</p>
+          <p class="ts">{{ voter.timestamp }}</p>
+          <p class="view">
+            <Icon name="material-symbols:top-panel-open-rounded" color="#595959" size="2.5rem"></Icon>
           </p>
         </summary>
         <div class="details">
-          <p>Mary Joe</p>
-          <p>Taiwo Emmanuel</p>
-          <p>Akindele Ayomide Jesutofunmi Joshua</p>
+          <p>{{ listContestant(voter.candidates)[0] }}</p>
+          <p>{{ listContestant(voter.candidates)[1] }}</p>
+          <p>{{ listContestant(voter.candidates)[2] }}</p>
         </div>
       </details>
     </div>
@@ -47,36 +49,83 @@
 </template>
 
 <script setup>
-
 const contestants = ref([
   {
-    image: '../img/user1.jpg',
-    name: 'Mary Joe',
-    votes: 62,
+    image: '../img/richard.jpg',
+    name: 'Bro. Olaleye Richard',
+    votes: 0,
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Akindele Ayomide Jesutofunmi Joshua',
-    votes: 40,
+    image: '../img/olubukonla.jpg',
+    name: 'Sis. Olubukonla Remilekun',
+    votes: 0,
   },
   {
-    image: '../img/user1.jpg',
-    name: 'Taiwo Emmanuel',
-    votes: 60,
+    image: '../img/abayomi.jpg',
+    name: 'Dcns. Abayomi Abosede',
+    votes: 0,
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Abimbola Joseph',
-    votes: 43,
+    image: '../img/grace.jpg',
+    name: 'Sis. Asuqua Grace',
+    votes: 0,
   },
 ]);
 
-const totalVotes = computed(() => {
-  let total = 0;
-  for (const c of contestants.value) {
-    total = total + c.votes;
+const supabase = useSupabaseClient()
+
+let realtimeChannel;
+const { data: voters, refresh: refreshVoters } = await useAsyncData('voters', async () => {
+  const { data } = await supabase.from('voters').select()
+  return data
+})
+
+watchEffect(() => {
+  console.log('voters updated')
+  // reset to all votes to zero
+  contestants.value.forEach(contestant => {
+    contestant.votes = 0
+  });
+
+  for (const voter of voters.value) {
+    const arr = voter.candidates.split(',')
+    for (const candidate of arr) {
+      contestants.value.forEach(contestant => {
+        if (contestant.name === candidate.trim()) {
+          contestant.votes = contestant.votes + 1
+        }
+      });
+    }
   }
-  return total;
+})
+
+console.log(voters.value)
+
+const fetchVoters = async () => {
+  const { data } = await supabase.from('voters').select()
+  console.log(data)
+}
+
+const listContestant = (contestants) => {
+  const arr = contestants.split(',')
+  return arr
+}
+
+onMounted(() => {
+  realtimeChannel = supabase.channel('public:voters').on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'voters' },
+    () => refreshVoters()
+  )
+  realtimeChannel.subscribe()
+})
+
+onUnmounted(() => {
+  supabase.removeChannel(realtimeChannel)
+})
+
+const totalVotes = computed(() => {
+  return voters.value.length || 0;
 });
 </script>
 
@@ -186,19 +235,29 @@ const totalVotes = computed(() => {
   width: 100%;
   margin-top: 40px;
   padding: 15px;
+  .center();
 
   h3 {
     font-weight: 500;
-  }
-
-  @media @desktop {
-    .center();
   }
 
   details {
     margin-top: 20px;
     width: 100%;
     max-width: 500px;
+
+    summary {
+      cursor: pointer;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    &[open] {
+      summary {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
 
     .details {
       background: #f1f1f2;

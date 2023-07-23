@@ -122,7 +122,6 @@ const getUser = async () => {
   const re = { user: false, vote: false }
   const { data: userData, error: userError } = await supabase.from('members').select().eq('id', password.value).single();
   if (userError) {
-    console.log(userError, userData)
     return re
   }
 

@@ -53,6 +53,9 @@ import { ref, useState, definePageMeta } from '#imports'
 const updateLoad = ref(false)
 const user = useState('user')
 const localUser = reactive(user.value)
+const supabase = useSupabaseClient()
+
+console.log(user.value)
 
 definePageMeta({
   middleware: 'auth',
@@ -70,13 +73,26 @@ const goBack = () => {
   useRouter().back();
 }
 
-const updateProfile = () => {
+const updateProfile = async () => {
   // update db and logout
   updateLoad.value = true
-  setTimeout(() => {
-      updateLoad = false
-    }, 1000)
-  console.log(localUser)
+  const { data, error } = await supabase
+    .from('members')
+    .update({
+      name: user.value.name,
+      address: user.value.address,
+      sex: user.value.sex,
+      phone: user.value.phone,
+      email: user.value.email,
+      dept: user.value.dept,
+    })
+    .eq('id', user.value.id)
+    .select()
+  updateLoad.value = false
+  localUser.value = data
+  /* setTimeout(() => {
+    updateLoad.value = false
+  }, 1000) */
 }
 </script>
 

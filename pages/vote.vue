@@ -19,9 +19,14 @@
     </div>
   </div>
 
-  <p v-if="isDemo" id="demo-warn">Voting on Demo account won't be counted.</p>
+  <p v-if="isDemo" id="demo-warn">Voting with Demo account won't be counted.</p>
 
-  <div id="vote-summary" v-if="hasVoted">
+  <div id="portal-closed" v-if="portalClosed && !isDemo">
+    <h4>AGMM Voting Schedule</h4>
+    <p>Voting for the AGMM will be open from 7am on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
+  </div>
+
+  <div id="vote-summary" v-else-if="hasVoted">
     <h4>Thanks for voting</h4>
     <p>Click the button below to see result when voting ends.</p>
     <button disabled>See result</button>
@@ -69,6 +74,7 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
+const portalClosed = ref(true)
 const supabase = useSupabaseClient();
 
 const isLocalVote = ref(localStorage.getItem('vote'))
@@ -91,23 +97,23 @@ const isDemo = computed(() => {
 
 const contestants = ref([
   {
-    image: '../img/user1.jpg',
-    name: 'Mary Joe',
+    image: '../img/richard.jpg',
+    name: 'Bro. Olaleye Richard',
     selected: false,
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Akindele Ayomide Jesutofunmi Joshua',
+    image: '../img/olubukonla.jpg',
+    name: 'Sis. Olubukonla Remilekun',
     selected: false,
   },
   {
-    image: '../img/user1.jpg',
-    name: 'Taiwo Emmanuel',
+    image: '../img/abayomi.jpg',
+    name: 'Dcns. Abayomi Abosede',
     selected: false,
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Abimbola Joseph',
+    image: '../img/grace.jpg',
+    name: 'Sis. Asuqua Grace',
     selected: false,
   },
 ]);
@@ -310,12 +316,33 @@ const cancelVote = () => {
   text-align: center;
 }
 
+#portal-closed {
+  .center();
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  padding: 15px;
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: center;
+  color: #373a48;
+
+  h4 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin-top: 10px
+  }
+}
+
 #vote-summary {
   .center();
   width: 100%;
   padding: 15px;
   margin-top: 20px;
   text-align: center;
+  color: #373a48;
 
   h4 {
     font-size: 1.8rem;
