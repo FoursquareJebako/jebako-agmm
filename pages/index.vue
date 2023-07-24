@@ -11,7 +11,7 @@
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
-          <input id="submit-btn" type="submit" :value="submitValue" :disabled=submitDisabled />
+          <input id="submit-btn" type="submit" :value="submitValue" :disabled="submitDisabled" />
           <span id="spinner" v-show="loading">
             <Icon name="mingcute:loading-fill" color="white" size="30px" />
           </span>
@@ -100,16 +100,16 @@ const onLogin = async (e) => {
       return navigateTo('/vote')
     }
 
-    if (!user) {
-      toggleLoading(false)
-      err.status = true
-      err.type = 'password'
-    }
-
-    if (vote === null) {
+    if (user === null || vote === null) {
       toggleLoading(false)
       err.status = true
       err.type = 'network'
+    }
+
+    if (user === false) {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'password'
     }
   } else {
     toggleLoading(false)
@@ -120,17 +120,25 @@ const onLogin = async (e) => {
 
 const getUser = async () => {
   const re = { user: false, vote: false }
-  const { data: userData, error: userError } = await supabase.from('members').select().eq('id', password.value).single();
-  if (userError) {
-    return re
+  const {
+    data: userData, error: userError, status: userStatus
+  } = await supabase.from('members').select().eq('id', password.value).maybeSingle();
+  if (userData === null && userStatus === 200) {
+    return { user: false, vote: false }
+  } else if (userError || userStatus !== 200) {
+    return { user: null, vote: null }
+  } else {
+    re.user = userData
   }
 
-  re.user = userData
-  const { data: voteData, error: voteError } = await supabase.from('voters').select().eq('id', password.value).single();
-  if (voteData === null && voteError.hint === null) {
+  const {
+    data: voteData, error: voteError, status: voteStatus
+  } = await supabase.from('voters').select().eq('id', password.value).maybeSingle();
+  console.log(voteData)
+  if (voteData === null && voteStatus === 200) {
     // yet to vote
     re.vote = false
-  } else if (voteError) {
+  } else if (voteError || voteStatus !== 200) {
     //network
     re.vote = null
   } else {
