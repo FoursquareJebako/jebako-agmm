@@ -9,40 +9,140 @@
       <form @submit="onLogin">
         <label for="pw">Password</label>
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
-        <p id="error" v-show="err">Wrong Password. No record found</p>
-        <input id="submit-btn" type="submit" value="Login" />
+        <p id="error" v-show="err.status">{{ errType }}</p>
+        <div id="submit-wrapper" :class="{ loading }">
+          <input id="submit-btn" type="submit" :value="submitValue" :disabled=submitDisabled />
+          <span id="spinner" v-show="loading">
+            <Icon name="mingcute:loading-fill" color="white" size="30px" />
+          </span>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-let err = ref(false);
+<script setup lang="js">
+
 const password = ref()
-const userState = useState('password', () => password);
+const loading = ref(false)
+let err = reactive({
+  status: false,
+  type: 'password'
+})
+const supabase = useSupabaseClient();
 
 useHead({
   title: 'Jebako AGMM - Login',
   meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
 });
 
-const onLogin = (e: Event) => {
-  e.preventDefault();
-  if (password.value === '@admin') {
-    return navigateTo('/vote');
+const errType = computed(() => {
+  return err.type === 'network' ?
+    'Network Error. Please try again' :
+    'Wrong Password. No record found'
+})
+
+const submitDisabled = computed(() => {
+  return loading.value ? true : false
+})
+
+const submitValue = computed(() => {
+  return loading.value === false ? 'Login' : ''
+})
+
+const toggleLoading = (state) => {
+  if (state === true) {
+    loading.value = true
   } else {
-    err.value = true;
+    loading.value = false
+  }
+}
+
+const specialLogin = (login) => {
+  if (login === 'demo') {
+    useState('user', () => {
+      return { name: 'Demo Account', phone: '08123456789', sex: 'M', id: password.value }
+    })
+    if (localStorage.getItem('vote') === null) {
+      localStorage.setItem('vote', false)
+    }
+    setTimeout(async () => {
+      await navigateTo('/vote');
+      toggleLoading(false)
+    }, 1500)
+
+  }
+
+  if (login === 'admin') {
+    return navigateTo('/admin');
+    toggleLoading(false)
+  }
+}
+
+const onLogin = async (e) => {
+  e.preventDefault();
+  clearNuxtState(['user', 'vote'])
+  toggleLoading(true);
+
+  if (password.value && password.value.length === 6) {
+    if (password.value === '123456') {
+      specialLogin('demo')
+      return
+    } else if (password.value === '@admin') {
+      specialLogin('admin')
+      return
+    }
+
+    let { user, vote } = await getUser();
+    if (user && (vote || vote === false)) {
+      useState('user', () => user)
+      useState('vote', () => vote)
+      return navigateTo('/vote')
+    }
+
+    if (!user) {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'password'
+    }
+
+    if (vote === null) {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'network'
+    }
+  } else {
+    toggleLoading(false)
+    err.status = true
+    err.type = 'password'
   }
 };
+
+const getUser = async () => {
+  const re = { user: false, vote: false }
+  const { data: userData, error: userError } = await supabase.from('members').select().eq('id', password.value).single();
+  if (userError) {
+    return re
+  }
+
+  re.user = userData
+  const { data: voteData, error: voteError } = await supabase.from('voters').select().eq('id', password.value).single();
+  if (voteData === null && voteError.hint === null) {
+    // yet to vote
+    re.vote = false
+  } else if (voteError) {
+    //network
+    re.vote = null
+  } else {
+    re.vote = voteData
+  }
+
+  return re
+}
 </script>
 
 <style lang="less" scoped>
-.center() {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+@import '../assets/theme.less';
 
 #container {
   width: 100%;
@@ -103,7 +203,7 @@ form {
     &:active,
     &:focus-visible {
       outline: none;
-      border-color: #2a52be;
+      border-color: #4e4feb;
     }
   }
 
@@ -115,6 +215,31 @@ form {
     border-radius: 2px;
   }
 
+  #submit-wrapper {
+    position: relative;
+  }
+
+  #spinner {
+    .center();
+    //content: url(../assets/spinner.svg); /* Replace with loading icon or SVG */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: 3px;
+    transform: translate(-50%, -50%);
+    animation: spin 1s infinite linear;
+  }
+
+  @keyframes spin {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
   #submit-btn {
     .center();
     width: 300px;
@@ -124,13 +249,18 @@ form {
     box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #4158f8;
-    border: 2px solid lighten(#4158f8, 10%);
+    background: #4e4feb;
     color: white;
     cursor: pointer;
 
-    &:hover {
-      background: darken(#4158f8, 5%);
+    &:disabled {
+      background: #dddcdc;
+      border: none;
+      color: #979797;
+    }
+
+    &:not(:disabled):hover {
+      background: darken(#4e4feb, 5%);
     }
   }
 }

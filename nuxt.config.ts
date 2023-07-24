@@ -1,14 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
-  modules: ['nuxt-icon'],
-  ssr: false,
+  modules: ['nuxt-icon', '@nuxtjs/supabase'],
+  ssr: true,
   nitro: {
     prerender: {
       crawlLinks: true
     }
   },
   css: ['@/assets/main.less'],
+  build: {
+    transpile: [
+      'nuxt-icon'
+    ]
+  },
   app: {
     head: {
       meta: [
@@ -16,9 +21,10 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'stylesheet', href: 'https://unpkg.com/modern-css-reset/dist/reset.min.css' },
+        { rel: 'stylesheet', href: './reset.css' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap' }
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap' }
       ]
     }
   }
