@@ -26,10 +26,22 @@
     <p>Voting for the AGMM will be open from 7am on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
   </div>
 
-  <div id="vote-summary" v-else-if="hasVoted">
-    <h4>Thanks for voting</h4>
-    <p>Click the button below to see result when voting ends.</p>
-    <button disabled>See result</button>
+  <div id="vote-summary" v-else-if="hasVoted || voteEnds">
+    <h4>{{ voteEnds ? 'Voting Has Ended' : 'Thanks for voting' }}</h4>
+    <p>Click the button below to see result {{ !voteEnds ? 'when voting ends on Sunday by 10am': '' }}</p>
+    <button :disabled="!voteEnds" @click="fetchResult()">See result</button>
+
+    <div id="votes-wrapper" v-if="showResult">
+      <div class="card" v-for="contestant in contestants">
+        <img :src="contestant.image" />
+        <div class="details">
+          <p class="name">{{ contestant.name }}</p>
+          <p class="votes">
+            <span>{{ contestant.votes }}</span> votes
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="container" v-else>
@@ -74,14 +86,46 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
-const portalClosed = ref(true)
 const supabase = useSupabaseClient();
-
+const showResult = ref(false)
 const isLocalVote = ref(localStorage.getItem('vote'))
-// console.log(user.value, isLocalVote.value)
-if (localStorage.getItem('voter')) {
-  // console.log(JSON.parse(localStorage.getItem('voter')))
-}
+// console.log(JSON.parse(localStorage.getItem('voter')))
+
+/* ADMIN CONTROLED STATES !! */
+const portalClosed = ref(true)
+const voteEnds = ref(false)
+/* ADMIN CONTROLLED STATES !! */
+
+const contestants = ref([
+  {
+    image: '../img/richard.jpg',
+    name: 'Bro. Olaleye Richard',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: '../img/olubukonla.jpg',
+    name: 'Sis. Olubukonla Remilekun',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: '../img/abayomi.jpg',
+    name: 'Dcns. Abayomi Abosede',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: '../img/grace.jpg',
+    name: 'Sis. Asuqua Grace',
+    selected: false,
+    votes: 0
+  },
+]);
+
+definePageMeta({
+  middleware: 'auth',
+});
 
 const hasVoted = computed(() => {
   if (user.value.id === '123456') {
@@ -94,33 +138,6 @@ const hasVoted = computed(() => {
 const isDemo = computed(() => {
   return user.value.id === '123456'
 })
-
-const contestants = ref([
-  {
-    image: '../img/richard.jpg',
-    name: 'Bro. Olaleye Richard',
-    selected: false,
-  },
-  {
-    image: '../img/olubukonla.jpg',
-    name: 'Sis. Olubukonla Remilekun',
-    selected: false,
-  },
-  {
-    image: '../img/abayomi.jpg',
-    name: 'Dcns. Abayomi Abosede',
-    selected: false,
-  },
-  {
-    image: '../img/grace.jpg',
-    name: 'Sis. Asuqua Grace',
-    selected: false,
-  },
-]);
-
-definePageMeta({
-  middleware: 'auth',
-});
 
 const voteStatus = computed(() => {
   return hasVoted.value ? 'Voted successfully' : 'Yet to vote'
@@ -210,6 +227,31 @@ const handleSubmit = async (voter) => {
     clearNuxtState('vote')
     useState('vote', () => data)
   }
+}
+
+const fetchResult = async () => {
+  if (showResult.value) {
+    // fetched and result is on page already
+    return false
+  }
+  const { data, error } = await supabase.from('voters').select('candidates')
+  console.log(data)
+  if (error) {
+    return false;
+  }
+
+  for (const voter of data) {
+    const arr = voter.candidates.split(',')
+    for (const candidate of arr) {
+      contestants.value.forEach(contestant => {
+        if (contestant.name === candidate.trim()) {
+          contestant.votes = contestant.votes + 1
+        }
+      });
+    }
+  }
+
+  showResult.value = true
 }
 
 const getName = () => {
@@ -373,6 +415,64 @@ const cancelVote = () => {
 
     &:not(:disabled):hover {
       background: darken(#4e4feb, 5%);
+    }
+  }
+}
+
+#votes-wrapper {
+  .center();
+  padding: 15px;
+
+  @media @desktop {
+    width: 100%;
+    max-width: 900px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 400px;
+    min-height: 130px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: center;
+    gap: 10px 0;
+    text-align: center;
+    margin-top: 20px;
+    //box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+
+    @media @desktop {
+      max-width: 1600px;
+    }
+
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .details {
+      max-width: 350px;
+
+      .name {
+        font-weight: 500;
+        font-size: 1.7rem;
+      }
+
+      .votes {
+        display: inline-block;
+        font-size: 1.7rem;
+        margin-top: 12px;
+        background: #f2f2f2;
+        padding: 3px 15px;
+        border-radius: 20px;
+      }
     }
   }
 }
