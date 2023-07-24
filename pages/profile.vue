@@ -55,7 +55,7 @@ const user = useState('user')
 const localUser = reactive(user.value)
 const supabase = useSupabaseClient()
 
-if (!user.value.phone.startsWith('0') && !user.value.phone.startsWith('+')) {
+if (user.value.phone && !user.value.phone.startsWith('0') && !user.value.phone.startsWith('+')) {
   user.value.phone = `0${user.value.phone}`
 }
 definePageMeta({
@@ -63,11 +63,11 @@ definePageMeta({
 });
 
 const isMale = computed(() => {
-  return localUser.sex.toUpperCase() === 'M'
+  return localUser.sex?.toUpperCase() === 'M'
 })
 
 const isFemale = computed(() => {
-  return localUser.sex.toUpperCase() === 'F'
+  return localUser.sex?.toUpperCase() === 'F'
 })
 
 const goBack = () => {
