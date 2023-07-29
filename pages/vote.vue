@@ -92,7 +92,7 @@ const isLocalVote = ref(localStorage.getItem('vote'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
 
 /* ADMIN CONTROLED STATES !! */
-const portalClosed = ref(true)
+const portalClosed = ref(false)
 const voteEnds = ref(false)
 /* ADMIN CONTROLLED STATES !! */
 
