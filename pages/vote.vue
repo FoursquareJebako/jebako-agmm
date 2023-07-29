@@ -23,7 +23,7 @@
 
   <div id="portal-closed" v-if="portalClosed && !isDemo">
     <h4>AGMM Voting Schedule</h4>
-    <p>Voting for the AGMM will be open from 9am on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
+    <p>Voting for the AGMM will be open from 7am to 4pm on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
   </div>
 
   <div id="vote-summary" v-else-if="hasVoted || voteEnds">
@@ -92,7 +92,7 @@ const isLocalVote = ref(localStorage.getItem('vote'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
 
 /* ADMIN CONTROLED STATES !! */
-const portalClosed = ref(false)
+const portalClosed = ref(true)
 const voteEnds = ref(false)
 /* ADMIN CONTROLLED STATES !! */
 
