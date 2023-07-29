@@ -23,7 +23,7 @@
 
   <div id="portal-closed" v-if="portalClosed && !isDemo">
     <h4>AGMM Voting Schedule</h4>
-    <p>Voting for the AGMM will be open from 7am on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
+    <p>Voting for the AGMM will be open from 9am on <b>Saturday, July 29th</b> to 10am on <b>Sunday, July 30th.</b></p>
   </div>
 
   <div id="vote-summary" v-else-if="hasVoted || voteEnds">
