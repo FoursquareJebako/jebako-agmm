@@ -134,7 +134,7 @@ const getUser = async () => {
   const {
     data: voteData, error: voteError, status: voteStatus
   } = await supabase.from('voters').select().eq('id', password.value).maybeSingle();
-  console.log(voteData)
+  //console.log(voteData)
   if (voteData === null && voteStatus === 200) {
     // yet to vote
     re.vote = false

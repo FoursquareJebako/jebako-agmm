@@ -28,7 +28,7 @@
 
   <div id="vote-summary" v-else-if="hasVoted || voteEnds">
     <h4>{{ voteEnds ? 'Voting Has Ended' : 'Thanks for voting' }}</h4>
-    <p>Click the button below to see result {{ !voteEnds ? 'when voting ends on Sunday by 10am': '' }}</p>
+    <p>Click the button below to see result {{ !voteEnds ? 'when voting ends on Sunday by 10am' : '' }}</p>
     <button :disabled="!voteEnds" @click="fetchResult()">See result</button>
 
     <div id="votes-wrapper" v-if="showResult">
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <button :disabled=isDisabled id="submit-btn" @click="submitVote">
+    <button :disabled="isDisabled" id="submit-btn" @click="submitVote">
       {{ getSubmitState }}
       <span id="spinner" v-show="submitState.loading">
         <Icon name="mingcute:loading-fill" color="white" size="3rem" />
@@ -95,6 +95,25 @@ const isLocalVote = ref(localStorage.getItem('vote'))
 const portalClosed = ref(true)
 const voteEnds = ref(false)
 /* ADMIN CONTROLLED STATES !! */
+
+const calcTimedState = (resumeTime, endTime) => {
+  const now = new Date()
+  const pastResume = new Date(resumeTime) - now
+  const pastEnd = new Date(endTime) - now
+
+  if (pastEnd <= 0) {
+    portalClosed.value = false
+    voteEnds.value = true
+  } else if (pastResume <=0 ) {
+    portalClosed.value = false
+    voteEnds.value = false
+  } else {
+    portalClosed.value = true
+    voteEnds.value = false
+  }
+}
+
+calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 9:59:00')
 
 const contestants = ref([
   {
@@ -374,7 +393,7 @@ const cancelVote = () => {
   }
 
   p {
-    margin-top: 10px
+    margin-top: 10px;
   }
 }
 
@@ -391,7 +410,7 @@ const cancelVote = () => {
   }
 
   p {
-    margin-top: 5px
+    margin-top: 5px;
   }
 
   button {
