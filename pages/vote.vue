@@ -32,6 +32,10 @@
     <button :disabled="!voteEnds" @click="fetchResult()">See result</button>
 
     <div id="votes-wrapper" v-if="showResult">
+      <div id="totals">
+        <h3>Total Voters</h3>
+        <p>{{ totalVoters }}</p>
+      </div>
       <div class="card" v-for="contestant in contestants">
         <img :src="contestant.image" />
         <div class="details">
@@ -104,17 +108,15 @@ const calcTimedState = (resumeTime, endTime) => {
   if (pastEnd <= 0) {
     portalClosed.value = false
     voteEnds.value = true
-  } else if (pastResume <=0 ) {
+  } else if (pastResume <= 0) {
     portalClosed.value = false
-    voteEnds.value = false
-  } else {
-    portalClosed.value = true
     voteEnds.value = false
   }
 }
 
-calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 9:59:00')
+calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 09:59:00')
 
+const totalVoters = ref(null)
 const contestants = ref([
   {
     image: '../img/richard.jpg',
@@ -253,13 +255,12 @@ const fetchResult = async () => {
     // fetched and result is on page already
     return false
   }
-  const { data, error } = await supabase.from('voters').select('candidates')
-  console.log(data)
+  const { data: voters, error } = await supabase.from('voters').select('candidates')
   if (error) {
     return false;
   }
 
-  for (const voter of data) {
+  for (const voter of voters) {
     const arr = voter.candidates.split(',')
     for (const candidate of arr) {
       contestants.value.forEach(contestant => {
@@ -270,6 +271,7 @@ const fetchResult = async () => {
     }
   }
 
+  totalVoters.value = voters.length || 'null'
   showResult.value = true
 }
 
@@ -441,6 +443,7 @@ const cancelVote = () => {
 #votes-wrapper {
   .center();
   padding: 15px;
+  margin-top: 20px;
 
   @media @desktop {
     width: 100%;
@@ -448,6 +451,24 @@ const cancelVote = () => {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
+  }
+
+  #totals {
+    .center();
+    width: 80%;
+    max-width: 400px;
+    padding: 15px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border-radius: 10px;
+    font-size: 1.8rem;
+
+    p {
+      display: inline-block;
+      margin-top: 7px;
+      background: rgb(192, 255, 192);
+      padding: 3px 20px;
+      border-radius: 20px;
+    }
   }
 
   .card {
