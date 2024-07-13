@@ -8,10 +8,20 @@
     <div id="ctr">
       <form @submit="onLogin">
         <label for="pw">Password</label>
-        <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
+        <input
+          id="pw"
+          v-model="password"
+          maxlength="6"
+          placeholder="Enter Password"
+        />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
-          <input id="submit-btn" type="submit" :value="submitValue" :disabled="submitDisabled" />
+          <input
+            id="submit-btn"
+            type="submit"
+            :value="submitValue"
+            :disabled="submitDisabled"
+          />
           <span id="spinner" v-show="loading">
             <Icon name="mingcute:loading-fill" color="white" size="30px" />
           </span>
@@ -91,6 +101,11 @@ const onLogin = async (e) => {
     } else if (password.value === '@admin') {
       specialLogin('admin')
       return
+    } else {
+      // Disable getUser() now
+      toggleLoading(false)
+      err.status = true
+      err.type = 'password'
     }
 
     let { user, vote } = await getUser();
@@ -150,13 +165,13 @@ const getUser = async () => {
 </script>
 
 <style lang="less" scoped>
-@import '../assets/theme.less';
+@import "../assets/theme.less";
 
 #container {
   width: 100%;
   height: 100vh;
   display: flex;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 400;
   flex-direction: column;
   justify-content: center;
@@ -172,7 +187,8 @@ const getUser = async () => {
   #logo {
     width: 100px;
     height: 100px;
-    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px,
+      rgba(17, 17, 26, 0.05) 0px 8px 32px;
   }
 
   h1 {

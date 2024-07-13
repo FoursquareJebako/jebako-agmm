@@ -114,31 +114,31 @@ const calcTimedState = (resumeTime, endTime) => {
   }
 }
 
-calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 09:59:00')
+//calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 09:59:00')
 
 const totalVoters = ref(null)
 const contestants = ref([
   {
-    image: '../img/richard.jpg',
-    name: 'Bro. Olaleye Richard',
+    image: '../img/profile2.png',
+    name: 'Nominee 1',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/olubukonla.jpg',
-    name: 'Sis. Olubukonla Remilekun',
+    image: '../img/profile2.png',
+    name: 'Nominee 2',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/abayomi.jpg',
-    name: 'Dcns. Abayomi Abosede',
+    image: '../img/profile2.png',
+    name: 'Nominee 3',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/grace.jpg',
-    name: 'Sis. Asuqua Grace',
+    image: '../img/profile2.png',
+    name: 'Nominee 4',
     selected: false,
     votes: 0
   },
