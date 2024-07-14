@@ -119,25 +119,25 @@ const calcTimedState = (resumeTime, endTime) => {
 const totalVoters = ref(null)
 const contestants = ref([
   {
-    image: '../img/profile2.png',
+    image: '../img/user1.jpg',
     name: 'Nominee 1',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/profile2.png',
+    image: '../img/user2.jpg',
     name: 'Nominee 2',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/profile2.png',
+    image: '../img/user1.jpg',
     name: 'Nominee 3',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/profile2.png',
+    image: '../img/user2.jpg',
     name: 'Nominee 4',
     selected: false,
     votes: 0
