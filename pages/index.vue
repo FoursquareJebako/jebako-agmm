@@ -73,8 +73,8 @@ const specialLogin = (login) => {
     useState('user', () => {
       return { name: 'Demo Account', phone: '08123456789', sex: 'M', id: password.value }
     })
-    if (localStorage.getItem('vote') === null) {
-      localStorage.setItem('vote', false)
+    if (localStorage.getItem('vote24') === null) {
+      localStorage.setItem('vote24', false)
     }
     setTimeout(async () => {
       await navigateTo('/vote');
