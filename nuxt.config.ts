@@ -2,18 +2,26 @@
 export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ['nuxt-icon', '@nuxtjs/supabase'],
-  ssr: true,
+  ssr: false,
+
   nitro: {
     prerender: {
       crawlLinks: true
     }
   },
+
+  supabase: {
+    redirect: false
+  },
+
   css: ['@/assets/main.less'],
+
   build: {
     transpile: [
       'nuxt-icon'
     ]
   },
+
   app: {
     head: {
       meta: [
@@ -27,5 +35,7 @@ export default defineNuxtConfig({
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap' }
       ]
     }
-  }
+  },
+
+  compatibilityDate: '2024-07-19'
 })
