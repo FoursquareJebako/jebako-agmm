@@ -12,7 +12,11 @@
       </p>
       <p class="status" :class="{ active: hasVoted }">
         <span v-if="hasVoted">
-          <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
+          <Icon
+            name="solar:check-circle-bold-duotone"
+            size="3rem"
+            color="#65ca65"
+          />
         </span>
         {{ voteStatus }}
       </p>
@@ -21,14 +25,28 @@
 
   <p v-if="isDemo" id="demo-warn">Voting with Demo account won't be counted.</p>
 
-  <div id="portal-closed" v-if="portalClosed && !isDemo">
+  <div class="portal-note" v-if="!isDemo && !openPortal">
     <h4>AGMM Voting Schedule</h4>
-    <p>Voting for the AGMM will resume by 7am and continue until 10am on <b>Sunday, July 30th</b></p>
+    <p>
+      Voting for the AGMM will start on <b>Saturday, 28th of July</b>, from
+      <b>7AM to 10 PM</b>
+    </p>
+  </div>
+
+  <div class="portal-note" v-else-if="openPortal && votePaused">
+    <h4>AGMM Voting Schedule</h4>
+    <p>
+      Voting for the AGMM will resume by 7am and continue until 10am on
+      <b>Sunday, July 30th</b>
+    </p>
   </div>
 
   <div id="vote-summary" v-else-if="hasVoted || voteEnds">
-    <h4>{{ voteEnds ? 'Voting Has Ended' : 'Thanks for voting' }}</h4>
-    <p>Click the button below to see result {{ !voteEnds ? 'when voting ends on Sunday by 10am' : '' }}</p>
+    <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
+    <p>
+      Click the button below to see result
+      {{ !voteEnds ? "when voting ends on Sunday by 10am" : "" }}
+    </p>
     <button :disabled="!voteEnds" @click="fetchResult()">See result</button>
 
     <div id="votes-wrapper" v-if="showResult">
@@ -63,8 +81,12 @@
         </div>
         <div class="content">
           <h3>{{ contestant.name }}</h3>
-          <button ref="selectBtn" :class="{ active: contestant.selected }" @click="chooseFn(contestant)">
-            {{ contestant.selected ? 'Selected' : 'Select' }}
+          <button
+            ref="selectBtn"
+            :class="{ active: contestant.selected }"
+            @click="chooseFn(contestant)"
+          >
+            {{ contestant.selected ? "Selected" : "Select" }}
           </button>
         </div>
       </div>
@@ -77,7 +99,9 @@
       </span>
     </button>
 
-    <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">Cancel Selection</button>
+    <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">
+      Cancel Selection
+    </button>
   </div>
 </template>
 
@@ -95,26 +119,38 @@ const showResult = ref(false)
 const isLocalVote = ref(localStorage.getItem('vote24'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
 
-/* ADMIN CONTROLED STATES !! */
-const portalClosed = ref(true)
+/* AUTO CONTROLED STATES !! */
+const openPortal = ref(false)
+const votePaused = ref(false)
 const voteEnds = ref(false)
-/* ADMIN CONTROLLED STATES !! */
+/* AUTO CONTROLLED STATES !! */
 
-const calcTimedState = (resumeTime, endTime) => {
+const autoPortal = () => {
   const now = new Date()
-  const pastResume = new Date(resumeTime) - now
-  const pastEnd = new Date(endTime) - now
+  const startTime = new Date('July 27, 2024 06:59:00') - now
+  const pauseTime = new Date('July 27, 2024 22:59:00') - now
+  const resumeTime = new Date('July 28, 2024 06:59:00') - now
+  const endTime = new Date('July 28, 2024 09:59:00') - now
 
-  if (pastEnd <= 0) {
-    portalClosed.value = false
+  if (startTime <= 0) {
+    // time lapse 1
+    openPortal.value = true
+  }
+  if (pauseTime <= 0) {
+    // time lapse 2
+    votePaused.value = true
+  }
+  if (resumeTime <= 0) {
+    // time lapse 3
+    votePaused.value = false
+  }
+  if (endTime <= 0) {
+    // time lapse 4
     voteEnds.value = true
-  } else if (pastResume <= 0) {
-    portalClosed.value = false
-    voteEnds.value = false
   }
 }
 
-//calcTimedState('July 30, 2023 06:59:00', 'July 30, 2023 09:59:00')
+autoPortal()
 
 const totalVoters = ref(null)
 const contestants = ref([
@@ -296,7 +332,7 @@ const cancelVote = () => {
 </script>
 
 <style lang="less" scoped>
-@import '../assets/theme.less';
+@import "../assets/theme.less";
 
 #header-wrap {
   background: #f4f4f5;
@@ -379,7 +415,7 @@ const cancelVote = () => {
   text-align: center;
 }
 
-#portal-closed {
+.portal-note {
   .center();
   width: 90%;
   max-width: 600px;

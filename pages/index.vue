@@ -101,11 +101,6 @@ const onLogin = async (e) => {
     } else if (password.value === '@admin') {
       specialLogin('admin')
       return
-    } else {
-      // Disable getUser() now
-      toggleLoading(false)
-      err.status = true
-      err.type = 'password'
     }
 
     let { user, vote } = await getUser();
