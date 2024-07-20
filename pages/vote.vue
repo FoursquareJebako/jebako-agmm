@@ -155,26 +155,26 @@ autoPortal()
 const totalVoters = ref(null)
 const contestants = ref([
   {
-    image: '../img/user1.jpg',
-    name: 'Nominee 1',
+    image: '../img/taiwo.jpg',
+    name: 'Sis. Taiwo Oseni',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Nominee 2',
+    image: '../img/grace.jpg',
+    name: 'Sis. Grace Asuquo',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/user1.jpg',
-    name: 'Nominee 3',
+    image: '../img/david.jpg',
+    name: 'Bro. David Okunowo',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/user2.jpg',
-    name: 'Nominee 4',
+    image: '../img/bukunmi.jpg',
+    name: 'Bro. Bukunmi Kuti',
     selected: false,
     votes: 0
   },
