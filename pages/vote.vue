@@ -178,6 +178,18 @@ const contestants = ref([
     selected: false,
     votes: 0
   },
+  {
+    image: '../img/user1.jpg',
+    name: 'Bro. Abiodun Idowu',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: '../img/user1.jpg',
+    name: 'Bro. Adebayo George',
+    selected: false,
+    votes: 0
+  },
 ]);
 
 definePageMeta({
