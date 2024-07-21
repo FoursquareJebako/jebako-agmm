@@ -116,7 +116,7 @@ const submitState = reactive({
 })
 const supabase = useSupabaseClient();
 const showResult = ref(false)
-const isLocalVote = ref(localStorage.getItem('vote24'))
+const isLocalVote = ref(localStorage.getItem('vote241'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
 
 /* AUTO CONTROLED STATES !! */
@@ -271,7 +271,7 @@ const handleSubmit = async (voter) => {
   if (user.value.id === '123456') {
     // console.log('TEST: Use localStorage')
     setTimeout(() => {
-      localStorage.setItem('vote24', true)
+      localStorage.setItem('vote241', true)
       localStorage.setItem('voter', JSON.stringify(voter))
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
