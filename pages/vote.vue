@@ -403,7 +403,7 @@ const cancelVote = () => {
     margin-top: 10px;
     display: inline-block;
     //background: #e4e4e7;
-    //background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.4);
     //box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border: 1px solid #ccc;

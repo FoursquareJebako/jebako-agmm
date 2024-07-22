@@ -159,11 +159,11 @@ const updateProfile = async () => {
     flex-direction: column;
     width: 400px;
     max-width: 80%;
-    color: rgba(31, 31, 31, 0.747);
-    color: @color2;
+    color: #6e7376;
+    font-weight: 500;
 
     &:not(:first-of-type) {
-      margin-top: 25px;
+      margin-top: 30px;
     }
   }
 
@@ -175,7 +175,7 @@ const updateProfile = async () => {
     border: 2px solid #e6e6e6;
     border-radius: 5px;
     padding: 10px;
-    background: #f2f2f2;
+    color: #6e7376;
 
     &:hover,
     &:focus,
@@ -190,7 +190,7 @@ const updateProfile = async () => {
   .radio {
     display: flex;
     flex-direction: row;
-    margin-top: 25px;
+    margin-top: 30px;
     color: @color2;
     width: 200px;
 
