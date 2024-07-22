@@ -35,7 +35,11 @@
           <p class="pw">{{ voter.id }}</p>
           <p class="ts">{{ voter.timestamp }}</p>
           <p class="view">
-            <Icon name="material-symbols:top-panel-open-rounded" color="#595959" size="2.5rem"></Icon>
+            <Icon
+              name="material-symbols:top-panel-open-rounded"
+              color="#595959"
+              size="2.5rem"
+            ></Icon>
           </p>
         </summary>
         <div class="details">
@@ -51,71 +55,86 @@
 <script setup>
 const contestants = ref([
   {
-    image: '../img/richard.jpg',
-    name: 'Bro. Olaleye Richard',
+    image: "../img/taiwo.jpg",
+    name: "Sis. Taiwo Oseni",
     votes: 0,
   },
   {
-    image: '../img/olubukonla.jpg',
-    name: 'Sis. Olubukonla Remilekun',
+    image: "../img/grace.jpg",
+    name: "Sis. Grace Asuquo",
     votes: 0,
   },
   {
-    image: '../img/abayomi.jpg',
-    name: 'Dcns. Abayomi Abosede',
+    image: "../img/david.jpg",
+    name: "Bro. David Okunowo",
     votes: 0,
   },
   {
-    image: '../img/grace.jpg',
-    name: 'Sis. Asuqua Grace',
+    image: "../img/bukunmi.jpg",
+    name: "Bro. Bukunmi Kuti",
+    votes: 0,
+  },
+  {
+    image: "../img/idowu.jpg",
+    name: "Bro. Abiodun Idowu",
+    votes: 0,
+  },
+  {
+    image: "../img/bayo.jpg",
+    name: "Bro. Adebayo George",
     votes: 0,
   },
 ]);
 
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient();
 
 let realtimeChannel;
-const { data: voters, refresh: refreshVoters } = await useAsyncData('voters', async () => {
-  const { data } = await supabase.from('voters').select()
-  return data
-})
+const { data: voters, refresh: refreshVoters } = await useAsyncData(
+  "voters",
+  async () => {
+    const { data } = await supabase.from("voters").select();
+    return data;
+  }
+);
 
 watchEffect(() => {
   // console.log('voters updated')
   // reset to all votes to zero
-  contestants.value.forEach(contestant => {
-    contestant.votes = 0
+  contestants.value.forEach((contestant) => {
+    contestant.votes = 0;
   });
 
   for (const voter of voters.value) {
-    const arr = voter.candidates.split(',')
+    const arr = voter.candidates.split(",");
     for (const candidate of arr) {
-      contestants.value.forEach(contestant => {
+      contestants.value.forEach((contestant) => {
         if (contestant.name === candidate.trim()) {
-          contestant.votes = contestant.votes + 1
+          contestant.votes = contestant.votes + 1;
         }
       });
     }
   }
-})
+});
 
 const listContestant = (contestants) => {
-  const arr = contestants.split(',')
-  return arr
-}
+  const arr = contestants.split(",");
+  return arr;
+};
 
 onMounted(() => {
-  realtimeChannel = supabase.channel('public:voters').on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'voters' },
-    () => refreshVoters()
-  )
-  realtimeChannel.subscribe()
-})
+  realtimeChannel = supabase
+    .channel("public:voters")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "voters" },
+      () => refreshVoters()
+    );
+  realtimeChannel.subscribe();
+});
 
 onUnmounted(() => {
-  supabase.removeChannel(realtimeChannel)
-})
+  supabase.removeChannel(realtimeChannel);
+});
 
 const totalVotes = computed(() => {
   return voters.value.length || 0;
@@ -123,7 +142,7 @@ const totalVotes = computed(() => {
 </script>
 
 <style scoped lang="less">
-@import '../assets/theme.less';
+@import "../assets/theme.less";
 
 #header {
   width: 100%;
