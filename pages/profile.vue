@@ -18,11 +18,11 @@
       <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
     </div>
     <label>
-      Home Address (Residential):
+      Home Address:
       <input type="text" v-model="localUser.address" />
     </label>
     <label>
-      Date of Birth (date/month/year):
+      Date of Birth:
       <input type="date" />
     </label>
     <label>
@@ -190,7 +190,7 @@ const updateProfile = async () => {
   .radio {
     display: flex;
     flex-direction: row;
-    margin-top: 20px;
+    margin-top: 25px;
     color: @color2;
     width: 200px;
 
