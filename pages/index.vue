@@ -222,7 +222,7 @@ form {
     &:active,
     &:focus-visible {
       outline: none;
-      border-color: #4e4feb;
+      border-color: #1565c0;
     }
   }
 
@@ -268,7 +268,7 @@ form {
     box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #4e4feb;
+    background: #1565c0;
     color: white;
     cursor: pointer;
 
@@ -279,7 +279,7 @@ form {
     }
 
     &:not(:disabled):hover {
-      background: darken(#4e4feb, 5%);
+      background: darken(#1565c0, 3%);
     }
   }
 }

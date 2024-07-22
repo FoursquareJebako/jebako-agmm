@@ -1,8 +1,7 @@
 <template>
-  <div id="header-wrap">
-    <button id="header" @click="goBack()">
-      <Icon name="solar:arrow-left-bold-duotone" color="#343f46" size="3rem"></Icon>
-      <p>Back</p>
+  <div id="header">
+    <button id="back-btn" @click="goBack()">
+      <Icon name="solar:arrow-left-bold-duotone" color="#1565c0" size="3rem"></Icon>
     </button>
     <div id="banner">
       <p><span id="title">Edit Church Records</span><br />Update your details</p>
@@ -100,20 +99,20 @@ const updateProfile = async () => {
 <style scoped lang="less">
 @import '../assets/theme.less';
 
-#header-wrap {
+#header {
   background: #f4f4f5;
   color: #373a48;
   position: relative;
   border-bottom: 1px solid #ccc;
 }
 
-#header {
+#back-btn {
   .center();
   flex-direction: row;
   position: absolute;
   top: 0;
   margin: 15px;
-  padding: 5px 10px;
+  padding: 4px 10px;
   gap: 0 5px;
   font-size: 1.8rem;
   border: 1px solid #ccc;
@@ -127,6 +126,8 @@ const updateProfile = async () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
   height: 300px;
   padding: 15px;
 
@@ -162,7 +163,7 @@ const updateProfile = async () => {
     color: @color2;
 
     &:not(:first-of-type) {
-      margin-top: 20px;
+      margin-top: 25px;
     }
   }
 
@@ -181,7 +182,7 @@ const updateProfile = async () => {
     &:active,
     &:focus-visible {
       outline: none;
-      border-color: #4e4feb;
+      border-color: #1565c0;
       background: white;
     }
   }
@@ -205,7 +206,7 @@ const updateProfile = async () => {
       width: 20px;
       height: 20px;
       vertical-align: middle;
-      accent-color: #4e4feb;
+      accent-color: #1565c0;
     }
   }
 
@@ -218,13 +219,13 @@ const updateProfile = async () => {
     box-shadow: none;
     padding: 10px;
     border-radius: 5px;
-    background: #4e4feb;
+    background: #1565c0;
     //border: 2px solid lighten(#4158f8, 10%);
     color: white;
     cursor: pointer;
 
     &:hover {
-      background: darken(#4e4feb, 5%);
+      background: darken(#1565c0, 5%);
     }
   }
 }

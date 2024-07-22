@@ -2,7 +2,7 @@
   <div id="header-wrap">
     <div id="header">
       <nuxtLink id="profile-btn" to="/profile">
-        <Icon name="solar:user-bold-duotone" size="3rem" />
+        <Icon name="solar:user-bold-duotone" size="3rem" color="#1565c0" />
       </nuxtLink>
     </div>
 
@@ -83,6 +83,7 @@
           <h3>{{ contestant.name }}</h3>
           <button
             ref="selectBtn"
+            class="select-btn"
             :class="{ active: contestant.selected }"
             @click="chooseFn(contestant)"
           >
@@ -179,13 +180,13 @@ const contestants = ref([
     votes: 0
   },
   {
-    image: '../img/user1.jpg',
+    image: '../img/idowu.jpg',
     name: 'Bro. Abiodun Idowu',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/user1.jpg',
+    image: '../img/bayo.jpg',
     name: 'Bro. Adebayo George',
     selected: false,
     votes: 0
@@ -375,8 +376,9 @@ const cancelVote = () => {
 
 #welcome-banner {
   .center();
-  align-items: flex-start;
-  height: 350px;
+  align-items: center;
+  text-align: center;
+  height: 330px;
   padding: 15px;
   border-bottom: 1px solid #ccc;
 
@@ -472,7 +474,7 @@ const cancelVote = () => {
     margin-top: 10px;
     padding: 10px;
     border-radius: 5px;
-    background: #4e4feb;
+    background: #1565c0;
     color: white;
     cursor: pointer;
 
@@ -483,7 +485,7 @@ const cancelVote = () => {
     }
 
     &:not(:disabled):hover {
-      background: darken(#4e4feb, 5%);
+      background: darken(#1565c0, 5%);
     }
   }
 }
@@ -607,9 +609,8 @@ const cancelVote = () => {
     padding: 15px;
     gap: 0 10px;
     grid-template-columns: 100px 1fr;
-    //box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    //box-shadow: rgba(9, 30, 66, 0.13) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
-    border: 1.4px solid #e6e6e6;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    //border: 1.4px solid #e6e6e6;
     border-radius: 10px;
 
     &:not(:first-of-type) {
@@ -641,8 +642,8 @@ const cancelVote = () => {
       font-size: 1.8rem;
     }
 
-    button {
-      width: 150px;
+    .select-btn {
+      width: 130px;
       margin-top: 10px;
       padding: 7px;
       outline: none;
@@ -651,8 +652,9 @@ const cancelVote = () => {
       border: 2px solid #e6e6e6;
 
       &.active {
-        background: #74757c;
+        background: #8d8e92;
         color: white;
+        border: 2px solid #8d8e92;
       }
     }
   }
@@ -668,7 +670,7 @@ const cancelVote = () => {
   box-shadow: none;
   padding: 10px;
   border-radius: 5px;
-  background: #4e4feb;
+  background: #1565c0;
   color: white;
   cursor: pointer;
 
@@ -679,7 +681,7 @@ const cancelVote = () => {
   }
 
   &:not(:disabled):hover {
-    background: darken(#4e4feb, 5%);
+    background: darken(#1565c0, 5%);
   }
 }
 
