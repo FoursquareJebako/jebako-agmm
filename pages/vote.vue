@@ -47,7 +47,14 @@
       Click the button below to see result
       {{ !voteEnds ? "when voting ends on Sunday by 10am" : "" }}
     </p>
-    <button :disabled="!voteEnds" @click="fetchResult()">See result</button>
+    <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">See result</button>
+
+    <!-- <div id="your-votes">
+      <button id="candidate-btn">See who you voted for</button>
+      <div class="summary">
+        <p><span>&#8226</span><span></span></p>
+      </div>
+    </div> -->
 
     <div id="votes-wrapper" v-if="showResult">
       <div id="totals">
@@ -117,7 +124,7 @@ const submitState = reactive({
 })
 const supabase = useSupabaseClient();
 const showResult = ref(false)
-const isLocalVote = ref(localStorage.getItem('vote241'))
+const isLocalVote = ref(localStorage.getItem('vote242'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
 
 /* AUTO CONTROLED STATES !! */
@@ -128,10 +135,10 @@ const voteEnds = ref(false)
 
 const autoPortal = () => {
   const now = new Date()
-  const startTime = new Date('July 27, 2024 06:59:00') - now
-  const pauseTime = new Date('July 27, 2024 22:59:00') - now
-  const resumeTime = new Date('July 28, 2024 06:59:00') - now
-  const endTime = new Date('July 28, 2024 09:59:00') - now
+  const startTime = new Date('July 23, 2024 06:59:00') - now
+  const pauseTime = new Date('July 23, 2024 22:59:00') - now
+  const resumeTime = new Date('July 23, 2024 06:59:00') - now
+  const endTime = new Date('July 23, 2024 09:59:00') - now
 
   if (startTime <= 0) {
     // time lapse 1
@@ -284,7 +291,7 @@ const handleSubmit = async (voter) => {
   if (user.value.id === '123456') {
     // console.log('TEST: Use localStorage')
     setTimeout(() => {
-      localStorage.setItem('vote241', true)
+      localStorage.setItem('vote242', true)
       localStorage.setItem('voter', JSON.stringify(voter))
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -449,6 +456,23 @@ const cancelVote = () => {
   }
 }
 
+#your-votes {
+  margin-top: 10px;
+  button {
+    .center();
+    font-size: 1.55rem;
+    width: 200px;
+    height: 40px;
+    border: none;
+    box-shadow: none;
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+
 #vote-summary {
   .center();
   width: 100%;
@@ -465,7 +489,7 @@ const cancelVote = () => {
     margin-top: 5px;
   }
 
-  button {
+  #result-btn {
     .center();
     width: 200px;
     height: 40px;
@@ -609,7 +633,8 @@ const cancelVote = () => {
     padding: 15px;
     gap: 0 10px;
     grid-template-columns: 100px 1fr;
-    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     //border: 1.4px solid #e6e6e6;
     border-radius: 10px;
 
