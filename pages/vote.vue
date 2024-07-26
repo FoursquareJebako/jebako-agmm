@@ -163,37 +163,37 @@ autoPortal()
 const totalVoters = ref(null)
 const contestants = ref([
   {
-    image: '../img/taiwo.jpg',
+    image: './img/taiwo.jpg',
     name: 'Sis. Taiwo Oseni',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/grace.jpg',
+    image: './img/grace.jpg',
     name: 'Sis. Grace Asuquo',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/david.jpg',
+    image: './img/david.jpg',
     name: 'Bro. David Okunowo',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/bukunmi.jpg',
+    image: './img/bukunmi.jpg',
     name: 'Bro. Bukunmi Kuti',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/idowu.jpg',
+    image: './img/idowu.jpg',
     name: 'Bro. Abiodun Idowu',
     selected: false,
     votes: 0
   },
   {
-    image: '../img/bayo.jpg',
+    image: './img/bayo.jpg',
     name: 'Bro. Adebayo George',
     selected: false,
     votes: 0
