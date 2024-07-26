@@ -28,7 +28,7 @@
   <div class="portal-note" v-if="!isDemo && !openPortal">
     <h4>AGMM Voting Schedule</h4>
     <p>
-      Voting for the AGMM will start on <b>Saturday, 28th of July</b>, from
+      Voting for the AGMM will start on <b>Saturday, 27th of July</b>, from
       <b>7AM to 10 PM</b>
     </p>
   </div>
