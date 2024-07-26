@@ -136,7 +136,7 @@ const voteEnds = ref(false)
 const autoPortal = () => {
   const now = new Date()
   const startTime = new Date('July 27, 2024 06:59:00') - now
-  const pauseTime = new Date('July 27, 2024 22:59:00') - now
+  const pauseTime = new Date('July 27, 2024 16:01:00') - now
   const resumeTime = new Date('July 28, 2024 06:59:00') - now
   const endTime = new Date('July 28, 2024 09:59:00') - now
 
