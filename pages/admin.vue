@@ -55,32 +55,32 @@
 <script setup>
 const contestants = ref([
   {
-    image: "../img/taiwo.jpg",
+    image: "./img/taiwo.jpg",
     name: "Sis. Taiwo Oseni",
     votes: 0,
   },
   {
-    image: "../img/grace.jpg",
+    image: "./img/grace.jpg",
     name: "Sis. Grace Asuquo",
     votes: 0,
   },
   {
-    image: "../img/david.jpg",
+    image: "./img/david.jpg",
     name: "Bro. David Okunowo",
     votes: 0,
   },
   {
-    image: "../img/bukunmi.jpg",
+    image: "./img/bukunmi.jpg",
     name: "Bro. Bukunmi Kuti",
     votes: 0,
   },
   {
-    image: "../img/idowu.jpg",
+    image: "./img/idowu.jpg",
     name: "Bro. Abiodun Idowu",
     votes: 0,
   },
   {
-    image: "../img/bayo.jpg",
+    image: "./img/bayo.jpg",
     name: "Bro. Adebayo George",
     votes: 0,
   },
