@@ -45,7 +45,7 @@
     <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
     <p>
       Click the button below to see result
-      {{ !voteEnds ? "when voting ends on Sunday by 10am" : "" }}
+      {{ !voteEnds ? "when voting ends" : "" }}
     </p>
     <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">
       See result

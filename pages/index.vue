@@ -7,7 +7,6 @@
 
     <div id="ctr">
       <form @submit="onLogin">
-        <label for="pw">Password</label>
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
@@ -207,7 +206,7 @@ form {
     max-width: 100%;
     margin-top: 5px;
     height: 45px;
-    border: 2px solid #e6e6e6;
+    border: 3px solid #dadada;
     border-radius: 5px;
     padding: 10px;
 
@@ -265,6 +264,7 @@ form {
     background: #1565c0;
     color: white;
     cursor: pointer;
+    margin-top: 10px;
 
     &:disabled {
       background: #dddcdc;

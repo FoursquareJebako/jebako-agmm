@@ -1,45 +1,58 @@
 <template>
   <div id="header">
     <button id="back-btn" @click="goBack()">
-      <Icon name="solar:arrow-left-bold-duotone" color="#1565c0" size="3rem"></Icon>
+      <Icon
+        name="solar:arrow-left-bold-duotone"
+        color="#1565c0"
+        size="3rem"
+      ></Icon>
     </button>
     <div id="banner">
-      <p><span id="title">Edit Church Records</span><br />Update your details</p>
+      <p>
+        <span id="title">Edit Your Records</span><br />Update your details
+      </p>
     </div>
   </div>
 
   <div id="container">
-    <label>
-      Full Name (Surname first):
-      <input type="text" v-model="localUser.name" />
-    </label>
-    <div class="radio">
-      <label>Male<input name="gender" type="radio" :checked="isMale" /></label>
-      <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
+    <div class="wrapper">
+      <label>
+        Full Name (Surname first):
+        <input type="text" v-model="localUser.name" />
+      </label>
+      <div class="radio">
+        <label
+          >Male<input name="gender" type="radio" :checked="isMale"
+        /></label>
+        <label
+          >Female<input name="gender" type="radio" :checked="isFemale"
+        /></label>
+      </div>
+      <label>
+        Home Address:
+        <input type="text" v-model="localUser.address" />
+      </label>
+      <label>
+        Date of Birth:
+        <input type="date" />
+      </label>
+      <label>
+        Phone Number:
+        <input type="text" v-model="localUser.phone" />
+      </label>
+      <label>
+        Email:
+        <input type="email" v-model="localUser.email" />
+      </label>
+      <label>
+        Church Department:
+        <input type="text" v-model="localUser.dept" />
+      </label>
     </div>
-    <label>
-      Home Address:
-      <input type="text" v-model="localUser.address" />
-    </label>
-    <label>
-      Date of Birth:
-      <input type="date" />
-    </label>
-    <label>
-      Phone Number:
-      <input type="text" v-model="localUser.phone" />
-    </label>
-    <label>
-      Email:
-      <input type="email" v-model="localUser.email" />
-    </label>
-    <label>
-      Church Department:
-      <input type="text" v-model="localUser.dept" />
-    </label>
 
-    <button id="update-btn"> <!-- @click="updateProfile" -->
-      {{ updateLoad === true ? '' : 'Update Profile' }}
+    <button id="update-btn">
+      <!-- @click="updateProfile" -->
+      {{ updateLoad === true ? "" : "Update Profile" }}
       <span id="spinner" v-show="updateLoad">
         <Icon name="mingcute:loading-fill" color="white" size="3rem" />
       </span>
@@ -97,7 +110,7 @@ const goBack = () => {
 </script>
 
 <style scoped lang="less">
-@import '../assets/theme.less';
+@import "../assets/theme.less";
 
 #header {
   background: #f4f4f5;
@@ -134,30 +147,52 @@ const goBack = () => {
   p {
     word-wrap: break-word;
     font-size: 1.6rem;
+
+    @media @desktop {
+      font-size: 2rem;
+    }
   }
 
   #title {
     font-size: 2.3rem;
     font-weight: 700;
+
+    @media @desktop {
+      font-size: 3rem;
+    }
+  }
+}
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  @media @desktop {
+    max-width: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
   }
 }
 
 #container {
+  width: 100%;
   padding: 15px;
   padding-bottom: 100px;
   margin-top: 20px;
   font-size: 1.5rem;
-
-  @media @desktop {
-    //background: red;
-    width: 600px;
-    padding-left: 50px;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   label {
     display: flex;
     flex-direction: column;
-    width: 400px;
+    width: 300px;
     max-width: 80%;
     color: #6e7376;
     font-weight: 500;
@@ -167,12 +202,13 @@ const goBack = () => {
     }
   }
 
-  input:not([type='radio']) {
+  input:not([type="radio"]) {
     width: 300px;
     max-width: 100%;
     margin-top: 5px;
     height: 45px;
-    border: 2px solid #e6e6e6;
+    border: 3px solid #dadada;
+    background: #fbfbfbf1;
     border-radius: 5px;
     padding: 10px;
     color: #6e7376;

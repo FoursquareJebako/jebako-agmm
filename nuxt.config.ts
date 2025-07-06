@@ -34,7 +34,7 @@ export default defineNuxtConfig({
       meta: [
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { property: "og:site_name", content: "Foursquare Jebako" },
-        { property: "og:title", content: "Jebako AGMM 2024" },
+        { property: "og:title", content: "Jebako AGMM 2025" },
         {
           property: "og:description",
           content: "Members only access. You can vote only once.",
