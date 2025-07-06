@@ -47,7 +47,9 @@
       Click the button below to see result
       {{ !voteEnds ? "when voting ends on Sunday by 10am" : "" }}
     </p>
-    <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">See result</button>
+    <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">
+      See result
+    </button>
 
     <!-- <div id="your-votes">
       <button id="candidate-btn">See who you voted for</button>
@@ -163,38 +165,32 @@ autoPortal() */
 const totalVoters = ref(null)
 const contestants = ref([
   {
-    image: './img/taiwo.jpg',
-    name: 'Sis. Taiwo Oseni',
+    image: './img/user1.jpg',
+    name: 'Contestant 1',
     selected: false,
     votes: 0
   },
   {
-    image: './img/grace.jpg',
-    name: 'Sis. Grace Asuquo',
+    image: './img/user2.jpg',
+    name: 'Contestant 2',
     selected: false,
     votes: 0
   },
   {
-    image: './img/david.jpg',
-    name: 'Bro. David Okunowo',
+    image: './img/user1.jpg',
+    name: 'Contestant 3',
     selected: false,
     votes: 0
   },
   {
-    image: './img/bukunmi.jpg',
-    name: 'Bro. Bukunmi Kuti',
+    image: './img/user2.jpg',
+    name: 'Contestant 4',
     selected: false,
     votes: 0
   },
   {
-    image: './img/idowu.jpg',
-    name: 'Bro. Abiodun Idowu',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/bayo.jpg',
-    name: 'Bro. Adebayo George',
+    image: './img/user1.jpg',
+    name: 'Contestant 5',
     selected: false,
     votes: 0
   },
@@ -399,11 +395,19 @@ const cancelVote = () => {
     width: 100%;
     word-wrap: break-word;
     color: #373a48;
+
+    @media @desktop {
+      font-size: 2rem;
+    }
   }
 
   #name {
     font-weight: 700;
     font-size: 2.5rem;
+
+    @media @desktop {
+      font-size: 3rem;
+    }
   }
 
   .status {
@@ -592,6 +596,7 @@ const cancelVote = () => {
 }
 
 #container {
+  width: 100%;
   .center();
   padding: 15px;
   padding-bottom: 100px;
@@ -615,6 +620,7 @@ const cancelVote = () => {
 }
 
 #vote-container {
+  width: 100%;
   .center();
   margin-top: 25px;
 
@@ -628,11 +634,12 @@ const cancelVote = () => {
     width: 100%;
     max-width: 600px;
     min-height: 150px;
-    display: grid;
+    display: flex;
     align-items: center;
+    justify-content: center;
     padding: 15px;
-    gap: 0 10px;
-    grid-template-columns: 100px 1fr;
+    gap: 0 50px;
+    //grid-template-columns: 100px 1fr;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
       rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     //border: 1.4px solid #e6e6e6;
