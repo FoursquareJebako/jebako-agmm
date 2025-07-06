@@ -122,7 +122,7 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
-const supabase = useSupabaseClient();
+//const supabase = useSupabaseClient();
 const showResult = ref(false)
 const isLocalVote = ref(localStorage.getItem('vote242'))
 // console.log(JSON.parse(localStorage.getItem('voter')))
@@ -133,7 +133,7 @@ const votePaused = ref(false)
 const voteEnds = ref(false)
 /* AUTO CONTROLLED STATES !! */
 
-const autoPortal = () => {
+/* const autoPortal = () => {
   const now = new Date()
   const startTime = new Date('July 27, 2024 06:59:00') - now
   const pauseTime = new Date('July 27, 2024 16:01:00') - now
@@ -158,7 +158,7 @@ const autoPortal = () => {
   }
 }
 
-autoPortal()
+autoPortal() */
 
 const totalVoters = ref(null)
 const contestants = ref([
@@ -296,17 +296,17 @@ const handleSubmit = async (voter) => {
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
-    const { data, error } = await supabase.from('voters').insert(voter).select()
+    /* const { data, error } = await supabase.from('voters').insert(voter).select()
     if (error) {
       // console.log(error)
       return
     }
     clearNuxtState('vote')
-    useState('vote', () => data)
+    useState('vote', () => data) */
   }
 }
 
-const fetchResult = async () => {
+/* const fetchResult = async () => {
   if (showResult.value) {
     // fetched and result is on page already
     return false
@@ -329,7 +329,7 @@ const fetchResult = async () => {
 
   totalVoters.value = voters.length || 'null'
   showResult.value = true
-}
+} */
 
 const getName = () => {
   const name = []

@@ -38,7 +38,7 @@
       <input type="text" v-model="localUser.dept" />
     </label>
 
-    <button id="update-btn" @click="updateProfile">
+    <button id="update-btn"> <!-- @click="updateProfile" -->
       {{ updateLoad === true ? '' : 'Update Profile' }}
       <span id="spinner" v-show="updateLoad">
         <Icon name="mingcute:loading-fill" color="white" size="3rem" />
@@ -52,7 +52,7 @@ import { ref, useState, definePageMeta } from '#imports'
 const updateLoad = ref(false)
 const user = useState('user')
 const localUser = reactive(user.value)
-const supabase = useSupabaseClient()
+//const supabase = useSupabaseClient()
 
 if (user.value.phone && !user.value.phone.startsWith('0') && !user.value.phone.startsWith('+')) {
   user.value.phone = `0${user.value.phone}`
@@ -73,7 +73,7 @@ const goBack = () => {
   useRouter().back();
 }
 
-const updateProfile = async () => {
+/* const updateProfile = async () => {
   // update db and logout
   updateLoad.value = true
   const { data, error } = await supabase
@@ -90,10 +90,10 @@ const updateProfile = async () => {
     .select()
   updateLoad.value = false
   localUser.value = data
-  /* setTimeout(() => {
+} */
+ /* setTimeout(() => {
     updateLoad.value = false
   }, 1000) */
-}
 </script>
 
 <style scoped lang="less">

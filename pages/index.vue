@@ -2,26 +2,16 @@
   <div id="container">
     <div id="brand">
       <img id="logo" alt="foursquare jebako logo" src="@/assets/logo.png" />
-      <h1>JEBAKO AGMM<br />VOTING PLATFORM</h1>
+      <h1>JEBAKO AGMM<br />VOTING PLATFORM 2025</h1>
     </div>
 
     <div id="ctr">
       <form @submit="onLogin">
         <label for="pw">Password</label>
-        <input
-          id="pw"
-          v-model="password"
-          maxlength="6"
-          placeholder="Enter Password"
-        />
+        <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
-          <input
-            id="submit-btn"
-            type="submit"
-            :value="submitValue"
-            :disabled="submitDisabled"
-          />
+          <input id="submit-btn" type="submit" :value="submitValue" :disabled="submitDisabled" />
           <span id="spinner" v-show="loading">
             <Icon name="mingcute:loading-fill" color="white" size="30px" />
           </span>
@@ -39,7 +29,7 @@ let err = reactive({
   status: false,
   type: 'password'
 })
-const supabase = useSupabaseClient();
+//const supabase = useSupabaseClient();
 
 useHead({
   title: 'Jebako AGMM - Login',
@@ -101,9 +91,13 @@ const onLogin = async (e) => {
     } else if (password.value === '@admin') {
       specialLogin('admin')
       return
+    } else {
+      toggleLoading(false)
+      err.status = true
+      err.type = 'password'
     }
 
-    let { user, vote } = await getUser();
+    /* let { user, vote } = await getUser();
     if (user && (vote || vote === false)) {
       useState('user', () => user)
       useState('vote', () => vote)
@@ -120,7 +114,7 @@ const onLogin = async (e) => {
       toggleLoading(false)
       err.status = true
       err.type = 'password'
-    }
+    } */
   } else {
     toggleLoading(false)
     err.status = true
@@ -128,7 +122,7 @@ const onLogin = async (e) => {
   }
 };
 
-const getUser = async () => {
+/* const getUser = async () => {
   const re = { user: false, vote: false }
   const {
     data: userData, error: userError, status: userStatus
@@ -156,7 +150,7 @@ const getUser = async () => {
   }
 
   return re
-}
+} */
 </script>
 
 <style lang="less" scoped>

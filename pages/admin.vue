@@ -86,18 +86,18 @@ const contestants = ref([
   },
 ]);
 
-const supabase = useSupabaseClient();
+//const supabase = useSupabaseClient();
 
-let realtimeChannel;
+/* let realtimeChannel;
 const { data: voters, refresh: refreshVoters } = await useAsyncData(
   "voters",
   async () => {
     const { data } = await supabase.from("voters").select();
     return data;
   }
-);
+); */
 
-watchEffect(() => {
+/* watchEffect(() => {
   // console.log('voters updated')
   // reset to all votes to zero
   contestants.value.forEach((contestant) => {
@@ -114,14 +114,14 @@ watchEffect(() => {
       });
     }
   }
-});
+}); */
 
 const listContestant = (contestants) => {
   const arr = contestants.split(",");
   return arr;
 };
 
-onMounted(() => {
+/* onMounted(() => {
   realtimeChannel = supabase
     .channel("public:voters")
     .on(
@@ -130,15 +130,15 @@ onMounted(() => {
       () => refreshVoters()
     );
   realtimeChannel.subscribe();
-});
+}); */
 
-onUnmounted(() => {
+/* onUnmounted(() => {
   supabase.removeChannel(realtimeChannel);
-});
+}); */
 
-const totalVotes = computed(() => {
+/* const totalVotes = computed(() => {
   return voters.value.length || 0;
-});
+}); */
 </script>
 
 <style scoped lang="less">
