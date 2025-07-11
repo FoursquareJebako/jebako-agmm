@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-06',
+  compatibilityDate: "2025-07-06",
   devtools: { enabled: false },
-  modules: ["nuxt-icon"], //"@nuxtjs/supabase"
+  modules: ["nuxt-icon"],
   ssr: false,
 
   nitro: {
@@ -11,16 +11,18 @@ export default defineNuxtConfig({
       crawlLinks: true,
     },
   },
-  /* runtimeConfig: {
+  runtimeConfig: {
     public: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+      apikey: process.env.NUXT_APIKEY,
+      authdomain: process.env.NUXT_AUTHDOMAIN,
+      databaseurl: process.env.NUXT_DATABASEURL,
+      projectid: process.env.NUXT_PROJECTID,
+      storagebucket: process.env.NUXT_STORAGEBUCKET,
+      messagingsenderid: process.env.NUXT_MESSAGINGSENDERID,
+      appid: process.env.NUXT_APPID,
+      measurementid: process.env.NUXT_MEASUREMENTID,
     },
-  }, */
-
-  /* supabase: {
-    redirect: false,
-  }, */
+  },
 
   css: ["@/assets/main.less"],
 
