@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-06",
   devtools: { enabled: false },
-  modules: ["nuxt-icon"],
+  modules: ["nuxt-icon", "nuxt-vuefire"],
   ssr: false,
 
   nitro: {
@@ -11,16 +11,16 @@ export default defineNuxtConfig({
       crawlLinks: true,
     },
   },
-  runtimeConfig: {
-    public: {
-      apikey: process.env.NUXT_APIKEY,
-      authdomain: process.env.NUXT_AUTHDOMAIN,
-      databaseurl: process.env.NUXT_DATABASEURL,
-      projectid: process.env.NUXT_PROJECTID,
-      storagebucket: process.env.NUXT_STORAGEBUCKET,
-      messagingsenderid: process.env.NUXT_MESSAGINGSENDERID,
-      appid: process.env.NUXT_APPID,
-      measurementid: process.env.NUXT_MEASUREMENTID,
+  vuefire: {
+    config: {
+      apiKey: process.env.NUXT_APIKEY,
+      authDomain: process.env.NUXT_AUTHDOMAIN,
+      databaseURL: process.env.NUXT_DATABASEURL,
+      projectId: process.env.NUXT_PROJECTID,
+      storageBucket: process.env.NUXT_STORAGEBUCKET,
+      messagingSenderId: process.env.NUXT_MESSAGINGSENDERID,
+      appId: process.env.NUXT_APPID,
+      measurementId: process.env.NUXT_MEASUREMENTID,
     },
   },
 

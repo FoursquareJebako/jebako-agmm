@@ -13,10 +13,12 @@
     "@nuxtjs/supabase": "^1.5.3",
     "@types/node": "^18.19.115",
     "nuxt": "^3.17.6",
-    "nuxt-icon": "^0.4.2"
+    "nuxt-icon": "^0.4.2",
+    "nuxt-vuefire": "^1.0.5"
   },
   "dependencies": {
     "firebase": "^11.10.0",
-    "less": "^4.3.0"
+    "less": "^4.3.0",
+    "vuefire": "^3.2.1"
   }
 }
