@@ -13,9 +13,11 @@
     "@nuxtjs/supabase": "^1.5.3",
     "@types/node": "^18.19.115",
     "nuxt": "^3.17.6",
-    "nuxt-icon": "^0.4.2"
+    "nuxt-icon": "^0.4.2",
+    "prettier": "3.6.2"
   },
   "dependencies": {
-    "less": "^4.3.0"
+    "less": "^4.3.0",
+    "vuefire": "^3.2.1"
   }
 }

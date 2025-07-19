@@ -38,7 +38,7 @@
       </label>
       <label>
         Phone Number:
-        <input type="text" v-model="localUser.phone" />
+        <input type="text" v-model="getPhone" />
       </label>
       <label>
         Email:
@@ -65,11 +65,7 @@ import { ref, useState, definePageMeta } from '#imports'
 const updateLoad = ref(false)
 const user = useState('user')
 const localUser = reactive(user.value)
-//const supabase = useSupabaseClient()
 
-if (user.value.phone && !user.value.phone.startsWith('0') && !user.value.phone.startsWith('+')) {
-  user.value.phone = `0${user.value.phone}`
-}
 definePageMeta({
   middleware: 'auth',
 });
@@ -80,6 +76,12 @@ const isMale = computed(() => {
 
 const isFemale = computed(() => {
   return localUser.sex?.toUpperCase() === 'F'
+})
+
+const getPhone = computed(() => {
+  if (user.value.phone) {
+    return `0${user.value.phone}`
+  }
 })
 
 const goBack = () => {
