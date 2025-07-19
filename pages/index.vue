@@ -6,11 +6,13 @@
     </div>
 
     <div id="ctr">
-      <form @submit="onLogin">
+      <form @submit.prevent="onLogin">
         <input id="pw" v-model="password" maxlength="6" placeholder="Enter Password" />
         <p id="error" v-show="err.status">{{ errType }}</p>
         <div id="submit-wrapper" :class="{ loading }">
-          <input id="submit-btn" type="submit" :value="submitValue" :disabled="submitDisabled" />
+          <button id="submit-btn" type="submit" :disabled="submitDisabled">
+            {{ submitValue }}
+          </button>
           <span id="spinner" v-show="loading">
             <Icon name="mingcute:loading-fill" color="white" size="30px" />
           </span>
@@ -21,135 +23,135 @@
 </template>
 
 <script setup lang="js">
-
-const password = ref()
-const loading = ref(false)
+const password = ref();
+const loading = ref(false);
 let err = reactive({
   status: false,
-  type: 'password'
-})
-//const supabase = useSupabaseClient();
+  type: "password",
+});
+const client = useSupabaseClient();
 
 useHead({
-  title: 'Jebako AGMM - Login',
-  meta: [{ name: 'description', content: 'Jebako AGMM Voting Platform' }],
+  title: "Jebako AGMM - Login",
+  meta: [{ name: "description", content: "Jebako AGMM Voting Platform" }],
 });
 
 const errType = computed(() => {
-  return err.type === 'network' ?
-    'Network Error. Please try again' :
-    'Wrong Password. No record found'
-})
+  return err.type === "network"
+    ? "An error occurred. Please try again"
+    : "Wrong Password. No record found";
+});
 
 const submitDisabled = computed(() => {
-  return loading.value ? true : false
-})
+  return loading.value ? true : false;
+});
 
 const submitValue = computed(() => {
-  return loading.value === false ? 'Login' : ''
-})
+  return loading.value === false ? "Login" : "";
+});
 
 const toggleLoading = (state) => {
-  if (state === true) {
-    loading.value = true
-  } else {
-    loading.value = false
+  loading.value = state;
+};
+
+const setDemoUser = () => {
+  clearNuxtState("user");
+  let localVote = localStorage.getItem("vote2025");
+  if (localVote === null) {
+    localStorage.setItem("vote2025", false);
   }
-}
+  useState("user", () => {
+    return {
+      name: "Demo Account",
+      phone: "08123456789",
+      sex: "M",
+      id: password.value,
+      address: "24 Oluwalogbon Street",
+      email: "demo@example.com",
+      hasVoted: JSON.parse(localVote),
+    };
+  });
+  console.log("Demo user data:", useState("user"));
+};
+
+const setRealUser = (data) => {
+  clearNuxtState("user");
+  useState("user", () => {
+    return data;
+  });
+  console.log("Real user data:", useState("user").value);
+};
 
 const specialLogin = (login) => {
-  if (login === 'demo') {
-    useState('user', () => {
-      return { name: 'Demo Account', phone: '08123456789', sex: 'M', id: password.value }
-    })
-    if (localStorage.getItem('vote242') === null) {
-      localStorage.setItem('vote242', false)
-    }
+  if (login === "demo") {
+    setDemoUser();
     setTimeout(async () => {
-      await navigateTo('/vote');
-      toggleLoading(false)
-    }, 1500)
-
+      await navigateTo("/vote");
+      toggleLoading(false);
+    }, 1000);
   }
 
-  if (login === 'admin') {
-    return navigateTo('/admin');
-    toggleLoading(false)
-  }
-}
-
-const onLogin = async (e) => {
-  e.preventDefault();
-  clearNuxtState(['user', 'vote'])
-  toggleLoading(true);
-
-  if (password.value && password.value.length === 6) {
-    if (password.value === '123456') {
-      specialLogin('demo')
-      return
-    } else if (password.value === '@admin') {
-      specialLogin('admin')
-      return
-    } else {
-      toggleLoading(false)
-      err.status = true
-      err.type = 'password'
-    }
-
-    /* let { user, vote } = await getUser();
-    if (user && (vote || vote === false)) {
-      useState('user', () => user)
-      useState('vote', () => vote)
-      return navigateTo('/vote')
-    }
-
-    if (user === null || vote === null) {
-      toggleLoading(false)
-      err.status = true
-      err.type = 'network'
-    }
-
-    if (user === false) {
-      toggleLoading(false)
-      err.status = true
-      err.type = 'password'
-    } */
-  } else {
-    toggleLoading(false)
-    err.status = true
-    err.type = 'password'
+  if (login === "admin") {
+    toggleLoading(false);
+    return navigateTo("/admin");
   }
 };
 
-/* const getUser = async () => {
-  const re = { user: false, vote: false }
-  const {
-    data: userData, error: userError, status: userStatus
-  } = await supabase.from('members').select().eq('id', password.value).maybeSingle();
-  if (userData === null && userStatus === 200) {
-    return { user: false, vote: false }
-  } else if (userError || userStatus !== 200) {
-    return { user: null, vote: null }
-  } else {
-    re.user = userData
+const onLogin = async (e) => {
+  toggleLoading(true);
+  const pass = password.value;
+
+  // Handle special logins
+  if (pass === "123456") {
+    specialLogin("demo");
+    return;
   }
 
-  const {
-    data: voteData, error: voteError, status: voteStatus
-  } = await supabase.from('voters').select().eq('id', password.value).maybeSingle();
-  //console.log(voteData)
-  if (voteData === null && voteStatus === 200) {
-    // yet to vote
-    re.vote = false
-  } else if (voteError || voteStatus !== 200) {
-    //network
-    re.vote = null
-  } else {
-    re.vote = voteData
+  if (pass === "admin") {
+    specialLogin("admin");
+    return;
   }
 
-  return re
-} */
+  // Validate password format
+  if (!pass || pass.length !== 6) {
+    handleError("password");
+    return;
+  }
+
+  // Try to fetch user
+  const result = await fetchUser(pass);
+  if (!result.success) {
+    handleError(result.type);
+  }
+};
+
+const fetchUser = async (pass) => {
+  try {
+    const { data, error } = await client.from("members").select().eq("id", parseInt(pass)).single();
+    if (error && error.message === 'TypeError: Failed to fetch') {
+      return { success: false, type: "network" };
+    }
+
+    if (data === null) {
+      return { success: false, type: "password" };
+    }
+    
+    setRealUser(data);
+    await navigateTo("/vote");
+    toggleLoading(false);
+    return { success: true };
+  } catch (error) {
+    console.error("Network error while fetching user:", error);
+    return { success: false, type: "network" };
+  }
+};
+
+// Unified error handler
+const handleError = (type) => {
+  toggleLoading(false);
+  err.status = true;
+  err.type = type;
+};
 </script>
 
 <style lang="less" scoped>
@@ -175,7 +177,8 @@ const onLogin = async (e) => {
   #logo {
     width: 100px;
     height: 100px;
-    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px,
+    box-shadow:
+      rgba(17, 17, 26, 0.05) 0px 4px 16px,
       rgba(17, 17, 26, 0.05) 0px 8px 32px;
   }
 

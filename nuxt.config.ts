@@ -2,25 +2,18 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-06",
   devtools: { enabled: false },
-  modules: ["nuxt-icon", "nuxt-vuefire"],
+  modules: ["nuxt-icon", "@nuxtjs/supabase"],
   ssr: false,
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    redirect: false
+  },
 
   nitro: {
     static: true,
     prerender: {
       crawlLinks: true,
-    },
-  },
-  vuefire: {
-    config: {
-      apiKey: process.env.NUXT_APIKEY,
-      authDomain: process.env.NUXT_AUTHDOMAIN,
-      databaseURL: process.env.NUXT_DATABASEURL,
-      projectId: process.env.NUXT_PROJECTID,
-      storageBucket: process.env.NUXT_STORAGEBUCKET,
-      messagingSenderId: process.env.NUXT_MESSAGINGSENDERID,
-      appId: process.env.NUXT_APPID,
-      measurementId: process.env.NUXT_MEASUREMENTID,
     },
   },
 

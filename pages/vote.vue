@@ -12,11 +12,7 @@
       </p>
       <p class="status" :class="{ active: hasVoted }">
         <span v-if="hasVoted">
-          <Icon
-            name="solar:check-circle-bold-duotone"
-            size="3rem"
-            color="#65ca65"
-          />
+          <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
         </span>
         {{ voteStatus }}
       </p>
@@ -28,7 +24,7 @@
   <div class="portal-note" v-if="!isDemo && !openPortal">
     <h4>AGMM Voting Schedule</h4>
     <p>
-      Voting for the AGMM will start on <b>Saturday, 27th of July</b>, from
+      Voting for the AGMM will start on <b>Saturday, 26th of July</b>, from
       <b>7AM to 10 PM</b>
     </p>
   </div>
@@ -37,7 +33,7 @@
     <h4>AGMM Voting Schedule</h4>
     <p>
       Voting for the AGMM will resume by 7am and continue until 10am on
-      <b>Sunday, July 30th</b>
+      <b>Sunday, July 27th</b>
     </p>
   </div>
 
@@ -90,12 +86,8 @@
         </div>
         <div class="content">
           <h3>{{ contestant.name }}</h3>
-          <button
-            ref="selectBtn"
-            class="select-btn"
-            :class="{ active: contestant.selected }"
-            @click="chooseFn(contestant)"
-          >
+          <button ref="selectBtn" class="select-btn" :class="{ active: contestant.selected }"
+            @click="chooseFn(contestant)">
             {{ contestant.selected ? "Selected" : "Select" }}
           </button>
         </div>
@@ -118,29 +110,107 @@
 <script setup lang="js">
 import { ref, useState, definePageMeta } from '#imports';
 const user = useState('user');
-const vote = useState('vote');
 const selectBtn = ref(null);
 const submitState = reactive({
   loading: false,
   confirm: false
 })
-//const supabase = useSupabaseClient();
-const showResult = ref(false)
-const isLocalVote = ref(localStorage.getItem('vote242'))
-// console.log(JSON.parse(localStorage.getItem('voter')))
+const client = useSupabaseClient();
+
+definePageMeta({
+  middleware: 'auth',
+});
 
 /* AUTO CONTROLED STATES !! */
 const openPortal = ref(false)
 const votePaused = ref(false)
 const voteEnds = ref(false)
+const showResult = ref(false)
 /* AUTO CONTROLLED STATES !! */
+
+const totalVoters = ref(null)
+const contestants = ref([
+  {
+    image: './img/user1.jpg',
+    name: 'Contestant 1',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/user1.jpg',
+    name: 'Contestant 2',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/user2.jpg',
+    name: 'Contestant 3',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/user2.jpg',
+    name: 'Contestant 4',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/user2.jpg',
+    name: 'Contestant 5',
+    selected: false,
+    votes: 0
+  },
+]);
+
+const hasVoted = computed(() => {
+  return user.value.hasVoted
+})
+
+const isDemo = computed(() => {
+  return user.value.id === '123456'
+})
+
+const voteStatus = computed(() => {
+  return hasVoted.value ? 'Voted successfully' : 'Yet to vote'
+})
+
+const selected = computed(() => {
+  const list = []
+  for (const x of contestants.value) {
+    if (x.selected) {
+      list.push(x)
+    }
+  }
+  return list
+})
+
+const getSubmitState = computed(() => {
+  if (submitState.confirm) {
+    return 'Click again to confirm'
+  } else if (submitState.loading) {
+    return ''
+  } else {
+    return 'Submit Vote'
+  }
+})
+
+const isDisabled = computed(() => {
+  const selectedLen = selected.value.length
+  if (submitState.loading) {
+    return true
+  } else if (selectedLen === 3) {
+    return false
+  } else {
+    return true
+  }
+})
 
 /* const autoPortal = () => {
   const now = new Date()
-  const startTime = new Date('July 27, 2024 06:59:00') - now
-  const pauseTime = new Date('July 27, 2024 16:01:00') - now
-  const resumeTime = new Date('July 28, 2024 06:59:00') - now
-  const endTime = new Date('July 28, 2024 09:00:00') - now
+  const startTime = new Date('July 26, 2025 06:59:00') - now
+  const pauseTime = new Date('July 26, 2025 16:01:00') - now
+  const resumeTime = new Date('July 27, 2025 06:59:00') - now
+  const endTime = new Date('July 27, 2025 09:00:00') - now
 
   if (startTime <= 0) {
     // time lapse 1
@@ -162,91 +232,6 @@ const voteEnds = ref(false)
 
 autoPortal() */
 
-const totalVoters = ref(null)
-const contestants = ref([
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 1',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 2',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 3',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 4',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 5',
-    selected: false,
-    votes: 0
-  },
-]);
-
-definePageMeta({
-  middleware: 'auth',
-});
-
-const hasVoted = computed(() => {
-  if (user.value.id === '123456') {
-    return isLocalVote.value === 'true' ? true : false
-  } else {
-    return vote.value ? true : false
-  }
-})
-
-const isDemo = computed(() => {
-  return user.value.id === '123456'
-})
-
-const voteStatus = computed(() => {
-  return hasVoted.value ? 'Voted successfully' : 'Yet to vote'
-})
-
-const selected = computed(() => {
-  const all = []
-  for (const x of contestants.value) {
-    if (x.selected) {
-      all.push(x)
-    }
-  }
-  return all
-})
-
-const getSubmitState = computed(() => {
-  if (submitState.confirm) {
-    return 'Click again to confirm'
-  } else if (submitState.loading) {
-    return ''
-  } else {
-    return 'Submit Vote'
-  }
-})
-
-const isDisabled = computed(() => {
-  const selectedLen = selected.value.length
-  if (submitState.loading) {
-    return true
-  } else if (selectedLen === 3) {
-    return false
-  }
-
-  return true
-})
-
 const chooseFn = (contestant) => {
   if (selectBtn.value.disabled) {
     return;
@@ -262,10 +247,10 @@ const chooseFn = (contestant) => {
 
 const submitVote = async () => {
   if (submitState.confirm) {
+    //final submit
     submitState.confirm = false
     submitState.loading = true
     selectBtn.value.disabled = true
-    //final submit
     const date = new Date()
     const day = date.toLocaleString('en-US', { weekday: 'short' })
     const time = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
@@ -276,29 +261,26 @@ const submitVote = async () => {
     }
     await handleSubmit(voter)
     submitState.loading = false
-    isLocalVote.value = 'true'
   } else if (!submitState.confirm) {
-    // console.log(getName())
+    //confirm submit
     submitState.confirm = true
   }
 }
 
 const handleSubmit = async (voter) => {
-  if (user.value.id === '123456') {
-    // console.log('TEST: Use localStorage')
+  if (isDemo.value) {
     setTimeout(() => {
-      localStorage.setItem('vote242', true)
-      localStorage.setItem('voter', JSON.stringify(voter))
+      localStorage.setItem('vote2025', true)
+      user.value.hasVoted = true
+      console.log('Demo user has voted:', user.value)
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
-    /* const { data, error } = await supabase.from('voters').insert(voter).select()
-    if (error) {
-      // console.log(error)
-      return
+    try {
+      
+    } catch (error) {
+      alert("There is an error recording vote. Please try again.");
     }
-    clearNuxtState('vote')
-    useState('vote', () => data) */
   }
 }
 
@@ -462,6 +444,7 @@ const cancelVote = () => {
 
 #your-votes {
   margin-top: 10px;
+
   button {
     .center();
     font-size: 1.55rem;
