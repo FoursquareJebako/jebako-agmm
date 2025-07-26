@@ -203,7 +203,7 @@ const autoPortal = () => {
   const now = new Date()
   const startTime = new Date('July 26, 2025 07:00:00') - now
   const pauseTime = new Date('July 26, 2025 16:01:00') - now
-  const resumeTime = new Date('July 27, 2025 07:00:00') - now
+  const resumeTime = new Date('July 26, 2025 17:40:00') - now
   const endTime = new Date('July 27, 2025 10:01:00') - now
 
   if (startTime <= 0) {
