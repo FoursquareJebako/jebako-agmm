@@ -1,11 +1,7 @@
 <template>
   <div id="header">
     <button id="back-btn" @click="goBack()">
-      <Icon
-        name="solar:arrow-left-bold-duotone"
-        color="#1565c0"
-        size="3rem"
-      ></Icon>
+      <Icon name="solar:arrow-left-bold-duotone" color="#1565c0" size="3rem"></Icon>
     </button>
     <div id="banner">
       <p>
@@ -21,36 +17,20 @@
         <input type="text" v-model="localUser.name" />
       </label>
       <div class="radio">
-        <label
-          >Male<input name="gender" type="radio" :checked="isMale"
-        /></label>
-        <label
-          >Female<input name="gender" type="radio" :checked="isFemale"
-        /></label>
+        <label>Male<input name="gender" type="radio" :checked="isMale" /></label>
+        <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
       </div>
       <label>
         Home Address:
         <input type="text" v-model="localUser.address" />
       </label>
       <label>
-        Date of Birth:
-        <input type="date" />
-      </label>
-      <label>
         Phone Number:
         <input type="text" v-model="getPhone" />
       </label>
-      <label>
-        Email:
-        <input type="email" v-model="localUser.email" />
-      </label>
-      <label>
-        Church Department:
-        <input type="text" v-model="localUser.dept" />
-      </label>
     </div>
 
-    <button id="update-btn">
+    <button id="update-btn" @click="updateProfile" :disabled="updateLoad">
       <!-- @click="updateProfile" -->
       {{ updateLoad === true ? "" : "Update Profile" }}
       <span id="spinner" v-show="updateLoad">
@@ -65,6 +45,7 @@ import { ref, useState, definePageMeta } from '#imports'
 const updateLoad = ref(false)
 const user = useState('user')
 const localUser = reactive(user.value)
+const client = useSupabaseClient()
 
 definePageMeta({
   middleware: 'auth',
@@ -88,27 +69,25 @@ const goBack = () => {
   useRouter().back();
 }
 
-/* const updateProfile = async () => {
+const updateProfile = async () => {
   // update db and logout
   updateLoad.value = true
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('members')
     .update({
       name: user.value.name,
       address: user.value.address,
       sex: user.value.sex,
       phone: user.value.phone,
-      email: user.value.email,
-      dept: user.value.dept,
     })
     .eq('id', user.value.id)
     .select()
   updateLoad.value = false
   localUser.value = data
-} */
- /* setTimeout(() => {
-    updateLoad.value = false
-  }, 1000) */
+}
+setTimeout(() => {
+  updateLoad.value = false
+}, 1000)
 </script>
 
 <style scoped lang="less">

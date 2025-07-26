@@ -16,7 +16,7 @@
     </div>
 
     <div id="votes-wrapper">
-      <div class="card" v-for="contestant in contestants">
+      <div class="card" v-for="contestant in candidates">
         <img :src="contestant.image" />
         <div class="details">
           <p class="name">{{ contestant.name }}</p>
@@ -35,11 +35,7 @@
           <p class="pw">{{ voter.id }}</p>
           <p class="ts">{{ voter.timestamp }}</p>
           <p class="view">
-            <Icon
-              name="material-symbols:top-panel-open-rounded"
-              color="#595959"
-              size="2.5rem"
-            ></Icon>
+            <Icon name="material-symbols:top-panel-open-rounded" color="#595959" size="2.5rem"></Icon>
           </p>
         </summary>
         <div class="details">
@@ -53,75 +49,71 @@
 </template>
 
 <script setup>
-const contestants = ref([
-  {
-    image: "./img/taiwo.jpg",
-    name: "Sis. Taiwo Oseni",
-    votes: 0,
-  },
-  {
-    image: "./img/grace.jpg",
-    name: "Sis. Grace Asuquo",
-    votes: 0,
-  },
-  {
-    image: "./img/david.jpg",
-    name: "Bro. David Okunowo",
-    votes: 0,
-  },
-  {
-    image: "./img/bukunmi.jpg",
-    name: "Bro. Bukunmi Kuti",
-    votes: 0,
-  },
-  {
-    image: "./img/idowu.jpg",
-    name: "Bro. Abiodun Idowu",
-    votes: 0,
-  },
-  {
-    image: "./img/bayo.jpg",
-    name: "Bro. Adebayo George",
-    votes: 0,
-  },
-]);
 
-//const supabase = useSupabaseClient();
+const supabase = useSupabaseClient();
 
-/* let realtimeChannel;
+let realtimeChannel;
 const { data: voters, refresh: refreshVoters } = await useAsyncData(
   "voters",
   async () => {
     const { data } = await supabase.from("voters").select();
     return data;
   }
-); */
+);
 
-/* watchEffect(() => {
+const candidates = ref([
+  {
+    image: './img/adura.jpg',
+    name: 'Sis. Aduragbemi Rehoboth',
+    votes: 0
+  },
+  {
+    image: './img/grace.jpg',
+    name: 'Sis. Grace Asuquo',
+    votes: 0
+  },
+  {
+    image: './img/tomisin.jpg',
+    name: 'Sis. Tomisin George',
+    votes: 0
+  },
+  {
+    image: './img/hassan.jpg',
+    name: 'Bro. Kanmi Hassan',
+    votes: 0
+  },
+  {
+    image: './img/richard.jpg',
+    name: 'Bro. Richard Olaleye',
+    votes: 0
+  },
+]);
+
+watchEffect(() => {
   // console.log('voters updated')
   // reset to all votes to zero
-  contestants.value.forEach((contestant) => {
+  candidates.value.forEach((contestant) => {
     contestant.votes = 0;
   });
 
   for (const voter of voters.value) {
     const arr = voter.candidates.split(",");
     for (const candidate of arr) {
-      contestants.value.forEach((contestant) => {
+      candidates.value.forEach((contestant) => {
         if (contestant.name === candidate.trim()) {
           contestant.votes = contestant.votes + 1;
         }
       });
     }
   }
-}); */
+});
 
-const listContestant = (contestants) => {
-  const arr = contestants.split(",");
+const listContestant = (candidates) => {
+  const arr = candidates.split(",");
   return arr;
 };
 
-/* onMounted(() => {
+onMounted(() => {
   realtimeChannel = supabase
     .channel("public:voters")
     .on(
@@ -130,15 +122,15 @@ const listContestant = (contestants) => {
       () => refreshVoters()
     );
   realtimeChannel.subscribe();
-}); */
+});
 
-/* onUnmounted(() => {
+onUnmounted(() => {
   supabase.removeChannel(realtimeChannel);
-}); */
+});
 
-/* const totalVotes = computed(() => {
+const totalVotes = computed(() => {
   return voters.value.length || 0;
-}); */
+});
 </script>
 
 <style scoped lang="less">

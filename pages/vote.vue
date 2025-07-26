@@ -47,19 +47,12 @@
       See result
     </button>
 
-    <!-- <div id="your-votes">
-      <button id="candidate-btn">See who you voted for</button>
-      <div class="summary">
-        <p><span>&#8226</span><span></span></p>
-      </div>
-    </div> -->
-
     <div id="votes-wrapper" v-if="showResult">
       <div id="totals">
         <h3>Total Voters</h3>
         <p>{{ totalVoters }}</p>
       </div>
-      <div class="card" v-for="contestant in contestants">
+      <div class="card" v-for="contestant in candidates">
         <img :src="contestant.image" />
         <div class="details">
           <p class="name">{{ contestant.name }}</p>
@@ -80,7 +73,7 @@
     </div>
 
     <div id="vote-container">
-      <div class="card" v-for="contestant in contestants">
+      <div class="card" v-for="contestant in candidates">
         <div class="profile">
           <img :src="contestant.image" />
         </div>
@@ -115,6 +108,38 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
+const candidates = ref([
+  {
+    image: './img/adura.jpg',
+    name: 'Sis. Aduragbemi Rehoboth',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/grace.jpg',
+    name: 'Sis. Grace Asuquo',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/tomisin.jpg',
+    name: 'Sis. Tomisin George',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/hassan.jpg',
+    name: 'Bro. Kanmi Hassan',
+    selected: false,
+    votes: 0
+  },
+  {
+    image: './img/richard.jpg',
+    name: 'Bro. Richard Olaleye',
+    selected: false,
+    votes: 0
+  },
+]);
 const client = useSupabaseClient();
 
 definePageMeta({
@@ -129,38 +154,7 @@ const showResult = ref(false)
 /* AUTO CONTROLLED STATES !! */
 
 const totalVoters = ref(null)
-const contestants = ref([
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 1',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 2',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 3',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 4',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 5',
-    selected: false,
-    votes: 0
-  },
-]);
+
 
 const hasVoted = computed(() => {
   return user.value.hasVoted
@@ -176,7 +170,7 @@ const voteStatus = computed(() => {
 
 const selected = computed(() => {
   const list = []
-  for (const x of contestants.value) {
+  for (const x of candidates.value) {
     if (x.selected) {
       list.push(x)
     }
@@ -205,12 +199,12 @@ const isDisabled = computed(() => {
   }
 })
 
-/* const autoPortal = () => {
+const autoPortal = () => {
   const now = new Date()
-  const startTime = new Date('July 26, 2025 06:59:00') - now
+  const startTime = new Date('July 26, 2025 07:00:00') - now
   const pauseTime = new Date('July 26, 2025 16:01:00') - now
-  const resumeTime = new Date('July 27, 2025 06:59:00') - now
-  const endTime = new Date('July 27, 2025 09:00:00') - now
+  const resumeTime = new Date('July 27, 2025 07:00:00') - now
+  const endTime = new Date('July 27, 2025 10:01:00') - now
 
   if (startTime <= 0) {
     // time lapse 1
@@ -230,7 +224,7 @@ const isDisabled = computed(() => {
   }
 }
 
-autoPortal() */
+autoPortal()
 
 const chooseFn = (contestant) => {
   if (selectBtn.value.disabled) {
@@ -276,42 +270,48 @@ const handleSubmit = async (voter) => {
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
-    try {
-      
-    } catch (error) {
-      alert("There is an error recording vote. Please try again.");
+    const { error: voterErr  } = await client.from('voters').insert(voter)
+    const { error: userErr } = await client.from('members').update({ hasVoted: true }).eq('id', user.value.id)
+    if (voterErr || userErr) {
+      console.error('Error submitting vote:', voterErr || userErr)
+      alert('We could not submit your vote, please try again later.')
+      return false
+    } else {
+      user.value.hasVoted = true
+      console.log('Real user has voted:', user.value)
+      return true
     }
   }
 }
 
-/* const fetchResult = async () => {
+const fetchResult = async () => {
   if (showResult.value) {
     // fetched and result is on page already
     return false
   }
-  const { data: voters, error } = await supabase.from('voters').select('candidates')
+  const { data: voters, error } = await client.from('voters').select('candidates')
   if (error) {
     return false;
   }
-
+ 
   for (const voter of voters) {
     const arr = voter.candidates.split(',')
     for (const candidate of arr) {
-      contestants.value.forEach(contestant => {
+      candidates.value.forEach(contestant => {
         if (contestant.name === candidate.trim()) {
           contestant.votes = contestant.votes + 1
         }
       });
     }
   }
-
+ 
   totalVoters.value = voters.length || 'null'
   showResult.value = true
-} */
+}
 
 const getName = () => {
   const name = []
-  for (const x of contestants.value) {
+  for (const x of candidates.value) {
     if (x.selected) {
       name.push(x.name)
     }
@@ -320,7 +320,7 @@ const getName = () => {
 }
 
 const cancelVote = () => {
-  for (const x of contestants.value) {
+  for (const x of candidates.value) {
     if (x.selected) {
       x.selected = false
     }
@@ -646,7 +646,7 @@ const cancelVote = () => {
     .content {
       display: flex;
       flex-direction: column;
-      max-width: 350px;
+      max-width: 170px;
       //background: red;
       text-align: center;
       justify-content: center;
