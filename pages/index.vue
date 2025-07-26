@@ -93,6 +93,7 @@ const specialLogin = (login) => {
 
   if (login === "admin") {
     toggleLoading(false);
+    console.log("Admin login detected");
     return navigateTo("/admin");
   }
 };
@@ -107,7 +108,7 @@ const onLogin = async (e) => {
     return;
   }
 
-  if (pass === "admin") {
+  if (pass === "@admin") {
     specialLogin("admin");
     return;
   }
