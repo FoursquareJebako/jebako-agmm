@@ -85,9 +85,27 @@
           <Icon name="mingcute:loading-fill" color="white" size="3rem" />
         </span>
       </button>
-      <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">
+      <button v-show="selected.length && !submitState.loading" id="cancel-btn" @click="cancelVote">
         Cancel Selection
       </button>
+      <div v-if="showConfirmModal" class="modal-overlay" @click.self="closeConfirmationModal">
+        <div class="modal-card">
+          <h3>Confirm your vote</h3>
+          <p>Please review your three selected candidates before submitting.</p>
+          <div class="review-list">
+            <div class="review-item" :key="contestant.name" v-for="contestant in selected">
+              <img :src="contestant.image" :alt="contestant.name" />
+              <span>{{ contestant.name }}</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="secondary-btn" @click="closeConfirmationModal">Cancel</button>
+            <button class="primary-btn" @click="submitFinalVote" :disabled="submitState.loading">
+              {{ submitState.loading ? 'Submitting...' : 'Submit Vote' }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </DIV>
 </template>
@@ -100,6 +118,7 @@ const submitState = reactive({
   loading: false,
   confirm: false
 })
+const showConfirmModal = ref(false)
 const candidates = ref([
   {
     image: './img/user1.jpg',
@@ -218,38 +237,43 @@ const autoPortal = () => {
 autoPortal()
 
 const chooseFn = (contestant) => {
-  if (selectBtn.value.disabled) {
-    return;
+  if (submitState.loading) {
+    return
   }
   if (contestant.selected) {
     contestant.selected = false
-    submitState.confirm = false
+    showConfirmModal.value = false
   } else if (selected.value.length < 3) {
     contestant.selected = !contestant.selected
   }
-  //console.log(selected.value)
 };
 
-const submitVote = async () => {
-  if (submitState.confirm) {
-    //final submit
-    submitState.confirm = false
-    submitState.loading = true
-    selectBtn.value.disabled = true
-    const date = new Date()
-    const day = date.toLocaleString('en-US', { weekday: 'short' })
-    const time = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
-    const voter = {
-      id: user.value.id,
-      candidates: getName(),
-      timestamp: `${day}, ${time}`
-    }
-    await handleSubmit(voter)
-    submitState.loading = false
-  } else if (!submitState.confirm) {
-    //confirm submit
-    submitState.confirm = true
+const submitVote = () => {
+  if (submitState.loading || selected.value.length !== 3) {
+    return
   }
+  showConfirmModal.value = true
+}
+
+const closeConfirmationModal = () => {
+  if (!submitState.loading) {
+    showConfirmModal.value = false
+  }
+}
+
+const submitFinalVote = async () => {
+  showConfirmModal.value = false
+  submitState.loading = true
+  const date = new Date()
+  const day = date.toLocaleString('en-US', { weekday: 'short' })
+  const time = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+  const voter = {
+    id: user.value.id,
+    candidates: getName(),
+    timestamp: `${day}, ${time}`
+  }
+  await handleSubmit(voter)
+  submitState.loading = false
 }
 
 const handleSubmit = async (voter) => {
@@ -316,7 +340,7 @@ const cancelVote = () => {
       x.selected = false
     }
   }
-  submitState.confirm = false
+  showConfirmModal.value = false
 }
 </script>
 
@@ -716,6 +740,90 @@ const cancelVote = () => {
 
   &:hover {
     background: darken(#fff, 20%);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-card {
+  width: min(100%, 480px);
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+
+  h3 {
+    margin: 0 0 8px;
+    color: #0f172a;
+  }
+
+  p {
+    margin: 0 0 16px;
+    color: #475569;
+  }
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  img {
+    width: 80px;
+    height: 80px;
+    object-position: 0 0;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  span {
+    font-weight: 600;
+    color: #0f172a;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+}
+
+.secondary-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.primary-btn {
+  background: #1565c0;
+  color: #fff;
+
+  &:disabled {
+    background: #a4a9b0;
+    cursor: not-allowed;
   }
 }
 </style>
