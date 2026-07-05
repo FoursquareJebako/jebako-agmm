@@ -2,7 +2,7 @@
   <div id="container">
     <div id="brand">
       <img id="logo" alt="foursquare jebako logo" src="@/assets/logo.png" />
-      <h1>JEBAKO AGMM<br />VOTING PLATFORM 2025</h1>
+      <h1>JEBAKO AGMM<br />VOTING PLATFORM 2026</h1>
     </div>
 
     <div id="ctr">

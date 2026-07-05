@@ -1,103 +1,95 @@
 <template>
-  <div id="header-wrap">
-    <div id="header">
-      <nuxtLink id="profile-btn" to="/profile">
-        <Icon name="solar:user-bold-duotone" size="3rem" color="#1565c0" />
-      </nuxtLink>
-    </div>
-
-    <div id="welcome-banner">
-      <p class="text">
-        Welcome,<br /><span id="name">{{ user.name }}</span>
-      </p>
-      <p class="status" :class="{ active: hasVoted }">
-        <span v-if="hasVoted">
-          <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
-        </span>
-        {{ voteStatus }}
-      </p>
-    </div>
-  </div>
-
-  <p v-if="isDemo" id="demo-warn">Voting with Demo account won't be counted.</p>
-
-  <div class="portal-note" v-if="!isDemo && !openPortal">
-    <h4>AGMM Voting Schedule</h4>
-    <p>
-      Voting for the AGMM will start on <b>Saturday, 26th of July</b>, from
-      <b>7AM to 10 PM</b>
-    </p>
-  </div>
-
-  <div class="portal-note" v-else-if="openPortal && votePaused">
-    <h4>AGMM Voting Schedule</h4>
-    <p>
-      Voting for the AGMM will resume by 7am and continue until 10am on
-      <b>Sunday, July 27th</b>
-    </p>
-  </div>
-
-  <div id="vote-summary" v-else-if="hasVoted || voteEnds">
-    <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
-    <p>
-      Click the button below to see result
-      {{ !voteEnds ? "when voting ends" : "" }}
-    </p>
-    <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">
-      See result
-    </button>
-
-    <div id="votes-wrapper" v-if="showResult">
-      <div id="totals">
-        <h3>Total Voters</h3>
-        <p>{{ totalVoters }}</p>
+  <DIV>
+    <div id="header-wrap">
+      <div id="header">
+        <nuxtLink id="profile-btn" to="/profile">
+          <Icon name="solar:user-bold-duotone" size="3rem" color="#1565c0" />
+        </nuxtLink>
       </div>
-      <div class="card" v-for="contestant in candidates">
-        <img :src="contestant.image" />
-        <div class="details">
-          <p class="name">{{ contestant.name }}</p>
-          <p class="votes">
-            <span>{{ contestant.votes }}</span> votes
-          </p>
+      <div id="welcome-banner">
+        <p class="text">
+          Welcome,<br /><span id="name">{{ user.name }}</span>
+        </p>
+        <p class="status" :class="{ active: hasVoted }">
+          <span v-if="hasVoted">
+            <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
+          </span>
+          {{ voteStatus }}
+        </p>
+      </div>
+    </div>
+    <p v-if="isDemo" id="demo-warn">Voting with Demo account won't be counted.</p>
+    <div class="portal-note" v-if="!isDemo && !openPortal">
+      <h4>AGMM Voting Schedule</h4>
+      <p>
+        Voting for the AGMM will start on <b>Saturday, 26th of July</b>, from
+        <b>7AM to 10 PM</b>
+      </p>
+    </div>
+    <div class="portal-note" v-else-if="openPortal && votePaused">
+      <h4>AGMM Voting Schedule</h4>
+      <p>
+        Voting for the AGMM will resume by 7am and continue until 10am on
+        <b>Sunday, July 27th</b>
+      </p>
+    </div>
+    <div id="vote-summary" v-else-if="hasVoted || voteEnds">
+      <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
+      <p>
+        Click the button below to see result
+        {{ !voteEnds ? "when voting ends" : "" }}
+      </p>
+      <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">
+        See result
+      </button>
+      <div id="votes-wrapper" v-if="showResult">
+        <div id="totals">
+          <h3>Total Voters</h3>
+          <p>{{ totalVoters }}</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="container" v-else>
-    <div id="instruction">
-      <div>
-        <h4>You can only vote three cadidates</h4>
-        <p>Click submit vote to confirm your vote</p>
-      </div>
-    </div>
-
-    <div id="vote-container">
-      <div class="card" v-for="contestant in candidates">
-        <div class="profile">
+        <div class="card" :key="contestant.name" v-for="contestant in candidates">
           <img :src="contestant.image" />
-        </div>
-        <div class="content">
-          <h3>{{ contestant.name }}</h3>
-          <button ref="selectBtn" class="select-btn" :class="{ active: contestant.selected }"
-            @click="chooseFn(contestant)">
-            {{ contestant.selected ? "Selected" : "Select" }}
-          </button>
+          <div class="details">
+            <p class="name">{{ contestant.name }}</p>
+            <p class="votes">
+              <span>{{ contestant.votes }}</span> votes
+            </p>
+          </div>
         </div>
       </div>
     </div>
-
-    <button :disabled="isDisabled" id="submit-btn" @click="submitVote">
-      {{ getSubmitState }}
-      <span id="spinner" v-show="submitState.loading">
-        <Icon name="mingcute:loading-fill" color="white" size="3rem" />
-      </span>
-    </button>
-
-    <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">
-      Cancel Selection
-    </button>
-  </div>
+    <div id="container" v-else>
+      <div id="instruction">
+        <div>
+          <h4>You can only vote three cadidates</h4>
+          <p>Click submit vote to confirm your vote</p>
+        </div>
+      </div>
+      <div id="vote-container">
+        <div class="card" :key="contestant.name" v-for="contestant in candidates">
+          <div class="profile">
+            <img :src="contestant.image" />
+          </div>
+          <div class="content">
+            <h3>{{ contestant.name }}</h3>
+            <button ref="selectBtn" class="select-btn" :class="{ active: contestant.selected }"
+              @click="chooseFn(contestant)">
+              {{ contestant.selected ? "Selected" : "Select" }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <button :disabled="isDisabled" id="submit-btn" @click="submitVote">
+        {{ getSubmitState }}
+        <span id="spinner" v-show="submitState.loading">
+          <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+        </span>
+      </button>
+      <button v-show="submitState.confirm" id="cancel-btn" @click="cancelVote">
+        Cancel Selection
+      </button>
+    </div>
+  </DIV>
 </template>
 
 <script setup lang="js">
@@ -110,32 +102,32 @@ const submitState = reactive({
 })
 const candidates = ref([
   {
-    image: './img/adura.jpg',
-    name: 'Sis. Aduragbemi Rehoboth',
+    image: './img/user1.jpg',
+    name: 'Contestant 1',
     selected: false,
     votes: 0
   },
   {
-    image: './img/grace.jpg',
-    name: 'Sis. Grace Asuquo',
+    image: './img/user2.jpg',
+    name: 'Contestant 2',
     selected: false,
     votes: 0
   },
   {
-    image: './img/tomisin.jpg',
-    name: 'Sis. Tomisin George',
+    image: './img/user1.jpg',
+    name: 'Contestant 3',
     selected: false,
     votes: 0
   },
   {
-    image: './img/hassan.jpg',
-    name: 'Bro. Kanmi Hassan',
+    image: './img/user2.jpg',
+    name: 'Contestant 4',
     selected: false,
     votes: 0
   },
   {
-    image: './img/richard.jpg',
-    name: 'Bro. Richard Olaleye',
+    image: './img/user1.jpg',
+    name: 'Contestant 5',
     selected: false,
     votes: 0
   },
@@ -154,7 +146,6 @@ const showResult = ref(false)
 /* AUTO CONTROLLED STATES !! */
 
 const totalVoters = ref(null)
-
 
 const hasVoted = computed(() => {
   return user.value.hasVoted
@@ -201,10 +192,10 @@ const isDisabled = computed(() => {
 
 const autoPortal = () => {
   const now = new Date()
-  const startTime = new Date('July 26, 2025 07:00:00') - now
-  const pauseTime = new Date('July 26, 2025 16:01:00') - now
-  const resumeTime = new Date('July 26, 2025 17:40:00') - now
-  const endTime = new Date('July 27, 2025 10:01:00') - now
+  const startTime = new Date('July 26, 2026 07:00:00') - now
+  const pauseTime = new Date('July 26, 2026 16:01:00') - now
+  const resumeTime = new Date('July 26, 2026 17:40:00') - now
+  const endTime = new Date('July 27, 2026 10:01:00') - now
 
   if (startTime <= 0) {
     // time lapse 1

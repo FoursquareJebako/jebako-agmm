@@ -1,55 +1,52 @@
 <template>
-  <div id="header">
-    <div class="title">
-      <p class="head">Admin Dashboard</p>
-      <p>Realtime counts</p>
+  <div>
+    <div id="header">
+      <div class="title">
+        <p class="head">Admin Dashboard</p>
+        <p>Realtime counts</p>
+      </div>
+      <nuxtLink to="/" id="logout-btn">
+        <Icon name="solar:logout-line-duotone" size="3rem"></Icon>
+      </nuxtLink>
     </div>
-    <nuxtLink to="/" id="logout-btn">
-      <Icon name="solar:logout-line-duotone" size="3rem"></Icon>
-    </nuxtLink>
-  </div>
-
-  <div id="container">
-    <div id="totals">
-      <h3>Total Voters</h3>
-      <p>{{ totalVotes }}</p>
-    </div>
-
-    <div id="votes-wrapper">
-      <div class="card" v-for="contestant in candidates">
-        <img :src="contestant.image" />
-        <div class="details">
-          <p class="name">{{ contestant.name }}</p>
-          <p class="votes">
-            <span>{{ contestant.votes }}</span> votes
-          </p>
+    <div id="container">
+      <div id="totals">
+        <h3>Total Voters</h3>
+        <p>{{ totalVotes }}</p>
+      </div>
+      <div id="votes-wrapper">
+        <div class="card" :key="contestant.name" v-for="contestant in candidates">
+          <img :src="contestant.image" />
+          <div class="details">
+            <p class="name">{{ contestant.name }}</p>
+            <p class="votes">
+              <span>{{ contestant.votes }}</span> votes
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div id="voters-wrapper">
-      <h3>All Voters</h3>
-
-      <details v-for="voter in voters">
-        <summary class="mobile-table">
-          <p class="pw">{{ voter.id }}</p>
-          <p class="ts">{{ voter.timestamp }}</p>
-          <p class="view">
-            <Icon name="material-symbols:top-panel-open-rounded" color="#595959" size="2.5rem"></Icon>
-          </p>
-        </summary>
-        <div class="details">
-          <p>{{ listContestant(voter.candidates)[0] }}</p>
-          <p>{{ listContestant(voter.candidates)[1] }}</p>
-          <p>{{ listContestant(voter.candidates)[2] }}</p>
-        </div>
-      </details>
+      <div id="voters-wrapper">
+        <h3>All Voters</h3>
+        <details :key="voter.id" v-for="voter in voters">
+          <summary class="mobile-table">
+            <p class="pw">{{ voter.id }}</p>
+            <p class="ts">{{ voter.timestamp }}</p>
+            <p class="view">
+              <Icon name="material-symbols:top-panel-open-rounded" color="#595959" size="2.5rem"></Icon>
+            </p>
+          </summary>
+          <div class="details">
+            <p>{{ listContestant(voter.candidates)[0] }}</p>
+            <p>{{ listContestant(voter.candidates)[1] }}</p>
+            <p>{{ listContestant(voter.candidates)[2] }}</p>
+          </div>
+        </details>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
 const supabase = useSupabaseClient();
 
 let realtimeChannel;

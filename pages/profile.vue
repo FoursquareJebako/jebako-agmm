@@ -1,42 +1,42 @@
 <template>
-  <div id="header">
-    <button id="back-btn" @click="goBack()">
-      <Icon name="solar:arrow-left-bold-duotone" color="#1565c0" size="3rem"></Icon>
-    </button>
-    <div id="banner">
-      <p>
-        <span id="title">Edit Your Records</span><br />Update your details
-      </p>
-    </div>
-  </div>
-
-  <div id="container">
-    <div class="wrapper">
-      <label>
-        Full Name (Surname first):
-        <input type="text" v-model="localUser.name" />
-      </label>
-      <div class="radio">
-        <label>Male<input name="gender" type="radio" :checked="isMale" /></label>
-        <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
+  <div>
+    <div id="header">
+      <button id="back-btn" @click="goBack()">
+        <Icon name="solar:arrow-left-bold-duotone" color="#1565c0" size="3rem"></Icon>
+      </button>
+      <div id="banner">
+        <p>
+          <span id="title">Edit Your Records</span><br />Update your details
+        </p>
       </div>
-      <label>
-        Home Address:
-        <input type="text" v-model="localUser.address" />
-      </label>
-      <label>
-        Phone Number:
-        <input type="text" v-model="getPhone" />
-      </label>
     </div>
-
-    <button id="update-btn" @click="updateProfile" :disabled="updateLoad">
-      <!-- @click="updateProfile" -->
-      {{ updateLoad === true ? "" : "Update Profile" }}
-      <span id="spinner" v-show="updateLoad">
-        <Icon name="mingcute:loading-fill" color="white" size="3rem" />
-      </span>
-    </button>
+    <div id="container">
+      <div class="wrapper">
+        <label>
+          Full Name (Surname first):
+          <input type="text" v-model="localUser.name" />
+        </label>
+        <div class="radio">
+          <label>Male<input name="gender" type="radio" :checked="isMale" /></label>
+          <label>Female<input name="gender" type="radio" :checked="isFemale" /></label>
+        </div>
+        <label>
+          Home Address:
+          <input type="text" v-model="localUser.address" />
+        </label>
+        <label>
+          Phone Number:
+          <input type="text" v-model="getPhone" />
+        </label>
+      </div>
+      <button id="update-btn" @click="updateProfile" :disabled="updateLoad">
+        <!-- @click="updateProfile" -->
+        {{ updateLoad === true ? "" : "Update Profile" }}
+        <span id="spinner" v-show="updateLoad">
+          <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+        </span>
+      </button>
+    </div>
   </div>
 </template>
 

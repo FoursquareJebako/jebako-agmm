@@ -1,3 +1,12 @@
+allowBuilds:
+  '@firebase/util': false
+  '@parcel/watcher': false
+  esbuild: false
+  protobufjs: false
+  vue-demi: false
+
+autoInstallPeers: true
+
 ignoredBuiltDependencies:
   - '@firebase/util'
   - '@parcel/watcher'
@@ -6,3 +15,5 @@ ignoredBuiltDependencies:
 onlyBuiltDependencies:
   - esbuild
   - vue-demi
+
+shamefullyHoist: true
