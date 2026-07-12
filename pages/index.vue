@@ -56,9 +56,9 @@ const toggleLoading = (state) => {
 
 const setDemoUser = () => {
   clearNuxtState("user");
-  let localVote = localStorage.getItem("vote2025");
+  let localVote = localStorage.getItem("vote2026");
   if (localVote === null) {
-    localStorage.setItem("vote2025", false);
+    localStorage.setItem("vote2026", false);
   }
   useState("user", () => {
     return {

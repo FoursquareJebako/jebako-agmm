@@ -279,7 +279,7 @@ const submitFinalVote = async () => {
 const handleSubmit = async (voter) => {
   if (isDemo.value) {
     setTimeout(() => {
-      localStorage.setItem('vote2025', true)
+      localStorage.setItem('vote2026', true)
       user.value.hasVoted = true
       console.log('Demo user has voted:', user.value)
     }, 2000)
