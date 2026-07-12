@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  css: ["@/assets/main.less", "./app/assets/css/main.css"],
+  css: ["@/assets/main.less"],
 
   build: {
     transpile: ["nuxt-icon"],
