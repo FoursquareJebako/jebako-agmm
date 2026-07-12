@@ -1,5 +1,6 @@
 <template>
   <div id="container">
+    <div>Vote with Voice</div>
     <div id="brand">
       <img id="logo" alt="foursquare jebako logo" src="@/assets/logo.png" />
       <h1>JEBAKO AGMM<br />VOTING PLATFORM 2026</h1>

@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-06",
   devtools: { enabled: false },
@@ -7,7 +9,7 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
-    redirect: false
+    redirect: false,
   },
 
   nitro: {
@@ -17,7 +19,11 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ["@/assets/main.less"],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+
+  css: ["@/assets/main.less", "./app/assets/css/main.css"],
 
   build: {
     transpile: ["nuxt-icon"],
