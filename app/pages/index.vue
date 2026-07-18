@@ -14,7 +14,7 @@
             {{ submitValue }}
           </button>
           <span id="spinner" v-show="loading">
-            <Icon name="mingcute:loading-fill" color="white" size="30px" />
+            <Icon name="svg-spinners:bars-scale-fade" style="color: white" size="25px" />
           </span>
         </div>
       </form>
@@ -243,7 +243,7 @@ form {
     left: 50%;
     margin-top: 3px;
     transform: translate(-50%, -50%);
-    animation: spin 1s infinite linear;
+    //animation: spin 1s infinite linear;
   }
 
   @keyframes spin {

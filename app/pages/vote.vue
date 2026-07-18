@@ -1,5 +1,5 @@
 <template>
-  <DIV>
+  <div>
     <div id="header-wrap">
       <div id="header">
         <nuxtLink id="profile-btn" to="/profile">
@@ -33,6 +33,7 @@
         <b>Sunday, July 27th</b>
       </p>
     </div>
+
     <div id="vote-summary" v-else-if="hasVoted || voteEnds">
       <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
       <p>
@@ -58,6 +59,7 @@
         </div>
       </div>
     </div>
+
     <div id="container" v-else>
       <div id="instruction">
         <div>
@@ -88,10 +90,12 @@
       <button v-show="selected.length && !submitState.loading" id="cancel-btn" @click="cancelVote">
         Cancel Selection
       </button>
+
+      <!-- Voting Confirmation Modal -->
       <div v-if="showConfirmModal" class="modal-overlay" @click.self="closeConfirmationModal">
         <div class="modal-card">
-          <h3>Confirm your vote</h3>
-          <p>Please review your three selected candidates before submitting.</p>
+          <h3 class="text-center">Confirm your vote</h3>
+          <p class="text-center">Please review your three selected candidates before submitting.</p>
           <div class="review-list">
             <div class="review-item" :key="contestant.name" v-for="contestant in selected">
               <img :src="contestant.image" :alt="contestant.name" />
@@ -285,7 +289,7 @@ const handleSubmit = async (voter) => {
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
-    const { error: voterErr  } = await client.from('voters').insert(voter)
+    const { error: voterErr } = await client.from('voters').insert(voter)
     const { error: userErr } = await client.from('members').update({ hasVoted: true }).eq('id', user.value.id)
     if (voterErr || userErr) {
       console.error('Error submitting vote:', voterErr || userErr)
@@ -308,7 +312,7 @@ const fetchResult = async () => {
   if (error) {
     return false;
   }
- 
+
   for (const voter of voters) {
     const arr = voter.candidates.split(',')
     for (const candidate of arr) {
@@ -319,7 +323,7 @@ const fetchResult = async () => {
       });
     }
   }
- 
+
   totalVoters.value = voters.length || 'null'
   showResult.value = true
 }
@@ -654,7 +658,8 @@ const cancelVote = () => {
     img {
       width: 100px;
       height: 100px;
-      border-radius: 100%; //100%
+      border-radius: 100%;
+      object-position: 0 0;
       object-fit: cover;
     }
 
@@ -737,6 +742,8 @@ const cancelVote = () => {
   border-radius: 5px;
   width: 200px;
   position: relative;
+  background: #f2f2f2;
+  color: #334155;
 
   &:hover {
     background: darken(#fff, 20%);
@@ -813,7 +820,7 @@ const cancelVote = () => {
 }
 
 .secondary-btn {
-  background: #e2e8f0;
+  background: #f2f2f2;
   color: #334155;
 }
 

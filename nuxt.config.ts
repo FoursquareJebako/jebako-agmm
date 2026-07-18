@@ -2,15 +2,9 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-07-06",
   devtools: { enabled: false },
-  modules: ["nuxt-icon", "@nuxtjs/supabase"],
+  modules: ["nuxt-icon", "@nuxtjs/supabase", "@nuxt/icon"],
   ssr: false,
-  supabase: {
-    url: process.env.SUPABASE_URL,
-    key: process.env.SUPABASE_KEY,
-    redirect: false,
-  },
 
   nitro: {
     static: true,
@@ -19,11 +13,18 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
+    },
+  },
+
+  css: ["./app/assets/css/main.css", "./assets/main.less"],
+
   vite: {
     plugins: [tailwindcss()],
   },
-
-  css: ["@/assets/main.less"],
 
   build: {
     transpile: ["nuxt-icon"],
