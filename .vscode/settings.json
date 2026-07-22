@@ -1,4 +1,16 @@
 {
-    "vue.codeActions.enabled": false,
-    "editor.semanticHighlighting.enabled": true
+  "vue.codeActions.enabled": false,
+  "editor.semanticHighlighting.enabled": true,
+  "editor.tokenColorCustomizations": {
+    "[Darcula]": {
+      "textMateRules": [
+        {
+          "scope": "entity.name.type.class",
+          "settings": {
+            "foreground": "#22B8A1"
+          }
+        }
+      ]
+    }
+  }
 }

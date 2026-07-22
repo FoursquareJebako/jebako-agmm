@@ -67,11 +67,9 @@ const setDemoUser = () => {
       sex: "M",
       id: password.value,
       address: "24 Oluwalogbon Street",
-      email: "demo@example.com",
       hasVoted: JSON.parse(localVote),
     };
   });
-  console.log("Demo user data:", useState("user"));
 };
 
 const setRealUser = (data) => {
@@ -79,7 +77,6 @@ const setRealUser = (data) => {
   useState("user", () => {
     return data;
   });
-  console.log("Real user data:", useState("user").value);
 };
 
 const specialLogin = (login) => {
@@ -108,11 +105,6 @@ const onLogin = async (e) => {
     return;
   }
 
-  if (pass === "@admin") {
-    specialLogin("admin");
-    return;
-  }
-
   // Validate password format
   if (!pass || pass.length !== 6) {
     handleError("password");
@@ -128,7 +120,7 @@ const onLogin = async (e) => {
 
 const fetchUser = async (pass) => {
   try {
-    const { data, error } = await client.from("members").select().eq("id", parseInt(pass)).single();
+    const { data, error } = await client.from('members').select(` *, voteRecord:voters ( candidates, timestamp )`).eq('id', pass).single();
     if (error && error.message === 'TypeError: Failed to fetch') {
       return { success: false, type: "network" };
     }
@@ -136,9 +128,14 @@ const fetchUser = async (pass) => {
     if (data === null) {
       return { success: false, type: "password" };
     }
-    
+
+    console.log("Fetched user data:", data);
     setRealUser(data);
-    await navigateTo("/vote");
+    if (data.name === "@Admin") {
+      specialLogin("admin");
+    } else {
+      await navigateTo("/vote");
+    }
     toggleLoading(false);
     return { success: true };
   } catch (error) {
@@ -237,23 +234,11 @@ form {
 
   #spinner {
     .center();
-    //content: url(../assets/spinner.svg); /* Replace with loading icon or SVG */
     position: absolute;
     top: 50%;
     left: 50%;
     margin-top: 3px;
     transform: translate(-50%, -50%);
-    //animation: spin 1s infinite linear;
-  }
-
-  @keyframes spin {
-    from {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-
-    to {
-      transform: translate(-50%, -50%) rotate(360deg);
-    }
   }
 
   #submit-btn {

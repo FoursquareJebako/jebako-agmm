@@ -49,6 +49,10 @@
 <script setup>
 const supabase = useSupabaseClient();
 
+definePageMeta({
+  middleware: 'admin-auth',
+});
+
 let realtimeChannel;
 const { data: voters, refresh: refreshVoters } = await useAsyncData(
   "voters",

@@ -2,9 +2,15 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+  compatibilityDate: '2026-07-18',
   devtools: { enabled: false },
-  modules: ["nuxt-icon", "@nuxtjs/supabase", "@nuxt/icon"],
+  modules: ["@nuxtjs/supabase", "@nuxt/icon"],
   ssr: false,
+  supabase: {
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+    redirect: false,
+  },
 
   nitro: {
     static: true,

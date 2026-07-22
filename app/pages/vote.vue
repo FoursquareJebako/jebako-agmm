@@ -12,7 +12,7 @@
         </p>
         <p class="status" :class="{ active: hasVoted }">
           <span v-if="hasVoted">
-            <Icon name="solar:check-circle-bold-duotone" size="3rem" color="#65ca65" />
+            <Icon name="solar:check-circle-bold-duotone" size="30px" style="color: #5AB55A" />
           </span>
           {{ voteStatus }}
         </p>
@@ -84,7 +84,7 @@
       <button :disabled="isDisabled" id="submit-btn" @click="submitVote">
         {{ getSubmitState }}
         <span id="spinner" v-show="submitState.loading">
-          <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+          <Icon name="svg-spinners:bars-scale-fade" style="color: white" size="25px" />
         </span>
       </button>
       <button v-show="selected.length && !submitState.loading" id="cancel-btn" @click="cancelVote">
@@ -117,7 +117,6 @@
 <script setup lang="js">
 import { ref, useState, definePageMeta } from '#imports';
 const user = useState('user');
-const selectBtn = ref(null);
 const submitState = reactive({
   loading: false,
   confirm: false
@@ -162,7 +161,7 @@ definePageMeta({
 });
 
 /* AUTO CONTROLED STATES !! */
-const openPortal = ref(false)
+const openPortal = ref(true)
 const votePaused = ref(false)
 const voteEnds = ref(false)
 const showResult = ref(false)
@@ -171,7 +170,7 @@ const showResult = ref(false)
 const totalVoters = ref(null)
 
 const hasVoted = computed(() => {
-  return user.value.hasVoted
+  return user.value.voteRecord
 })
 
 const isDemo = computed(() => {
@@ -238,7 +237,7 @@ const autoPortal = () => {
   }
 }
 
-autoPortal()
+// autoPortal()
 
 const chooseFn = (contestant) => {
   if (submitState.loading) {
@@ -284,19 +283,18 @@ const handleSubmit = async (voter) => {
   if (isDemo.value) {
     setTimeout(() => {
       localStorage.setItem('vote2026', true)
-      user.value.hasVoted = true
+      user.value.voterRecord = { candidates: voter.candidates, timestamp: voter.timestamp }
       console.log('Demo user has voted:', user.value)
     }, 2000)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
     const { error: voterErr } = await client.from('voters').insert(voter)
-    const { error: userErr } = await client.from('members').update({ hasVoted: true }).eq('id', user.value.id)
-    if (voterErr || userErr) {
-      console.error('Error submitting vote:', voterErr || userErr)
+    if (voterErr) {
+      console.error('Error submitting vote:', voterErr)
       alert('We could not submit your vote, please try again later.')
       return false
     } else {
-      user.value.hasVoted = true
+      user.value.voteRecord = { candidates: voter.candidates, timestamp: voter.timestamp }
       console.log('Real user has voted:', user.value)
       return true
     }
@@ -413,15 +411,23 @@ const cancelVote = () => {
 
   .status {
     margin-top: 10px;
-    display: inline-block;
+    display: inline-flex;
+    gap: 0 7px;
+    justify-content: center;
+    align-items: center;
     //background: #e4e4e7;
     background: rgba(255, 255, 255, 0.4);
-    //box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(107, 98, 98, 0.1);
     border: 1px solid #ccc;
     padding: 7px 30px;
     text-align: center;
     border-radius: 5px;
+    height: 43px;
+
+    span {
+      margin-top: 3px;
+    }
 
     &.active {
       background: rgb(205, 241, 205);
@@ -722,18 +728,8 @@ const cancelVote = () => {
 
 #spinner {
   display: inline-block;
-  transform: translateY(-2px);
-  animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-  from {
-    transform: translateY(-2px) rotate(0deg);
-  }
-
-  to {
-    transform: translateY(-2px) rotate(360deg);
-  }
+  margin: 0;
+  //transform: translateY(-2px);
 }
 
 #cancel-btn {
