@@ -163,7 +163,7 @@ definePageMeta({
 /* AUTO CONTROLED STATES !! */
 const openPortal = ref(false)
 const votePaused = ref(false)
-const voteEnds = ref(true)
+const voteEnds = ref(false)
 const showResult = ref(false)
 /* AUTO CONTROLLED STATES !! */
 
