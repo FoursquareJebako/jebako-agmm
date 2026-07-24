@@ -22,7 +22,7 @@
     <div class="portal-note" v-if="!isDemo && !openPortal">
       <h4>AGMM Voting Schedule</h4>
       <p>
-        Voting for the AGMM will start on <b>Saturday, 26th of July</b>, from
+        Voting for the AGMM will start on <b>Saturday, 25th of July</b>, from
         <b>7AM to 10 PM</b>
       </p>
     </div>
@@ -30,7 +30,7 @@
       <h4>AGMM Voting Schedule</h4>
       <p>
         Voting for the AGMM will resume by 7am and continue until 10am on
-        <b>Sunday, July 27th</b>
+        <b>Sunday, July 26th</b>
       </p>
     </div>
 
@@ -161,9 +161,9 @@ definePageMeta({
 });
 
 /* AUTO CONTROLED STATES !! */
-const openPortal = ref(true)
+const openPortal = ref(false)
 const votePaused = ref(false)
-const voteEnds = ref(false)
+const voteEnds = ref(true)
 const showResult = ref(false)
 /* AUTO CONTROLLED STATES !! */
 
@@ -214,10 +214,10 @@ const isDisabled = computed(() => {
 
 const autoPortal = () => {
   const now = new Date()
-  const startTime = new Date('July 26, 2026 07:00:00') - now
-  const pauseTime = new Date('July 26, 2026 16:01:00') - now
+  const startTime = new Date('July 25, 2026 07:00:00') - now
+  const pauseTime = new Date('July 25, 2026 16:01:00') - now
   const resumeTime = new Date('July 26, 2026 17:40:00') - now
-  const endTime = new Date('July 27, 2026 10:01:00') - now
+  const endTime = new Date('July 26, 2026 10:01:00') - now
 
   if (startTime <= 0) {
     // time lapse 1
@@ -281,22 +281,16 @@ const submitFinalVote = async () => {
 
 const handleSubmit = async (voter) => {
   if (isDemo.value) {
-    setTimeout(() => {
-      localStorage.setItem('vote2026', true)
-      user.value.voterRecord = { candidates: voter.candidates, timestamp: voter.timestamp }
-      console.log('Demo user has voted:', user.value)
-    }, 2000)
+    isDemoVote(voter)
     await new Promise(resolve => setTimeout(resolve, 2000))
   } else {
-    const { error: voterErr } = await client.from('voters').insert(voter)
-    if (voterErr) {
-      console.error('Error submitting vote:', voterErr)
-      alert('We could not submit your vote, please try again later.')
-      return false
+    let result = await isRealVote(voter)
+    if (!result.success) {
+      console.error("Error submitting vote:", result.error);
+      alert("We could not submit your vote, please try again later.");
     } else {
-      user.value.voteRecord = { candidates: voter.candidates, timestamp: voter.timestamp }
-      console.log('Real user has voted:', user.value)
-      return true
+      console.log('Vote submitted successfully')
+      console.log("Real user has voted:", user.value);
     }
   }
 }
@@ -311,12 +305,14 @@ const fetchResult = async () => {
     return false;
   }
 
+  console.log("Fetched voters:", voters);
   for (const voter of voters) {
     const arr = voter.candidates.split(',')
     for (const candidate of arr) {
+      console.log("Processing candidate:", candidate);
       candidates.value.forEach(contestant => {
         if (contestant.name === candidate.trim()) {
-          contestant.votes = contestant.votes + 1
+          contestant.votes += 1
         }
       });
     }

@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="js">
+import { setDemoUser, setRealUser } from '#imports';
+import { ref } from '#imports';
 const password = ref();
 const loading = ref(false);
 let err = reactive({
@@ -54,34 +56,9 @@ const toggleLoading = (state) => {
   loading.value = state;
 };
 
-const setDemoUser = () => {
-  clearNuxtState("user");
-  let localVote = localStorage.getItem("vote2026");
-  if (localVote === null) {
-    localStorage.setItem("vote2026", false);
-  }
-  useState("user", () => {
-    return {
-      name: "Demo Account",
-      phone: "08123456789",
-      sex: "M",
-      id: password.value,
-      address: "24 Oluwalogbon Street",
-      hasVoted: JSON.parse(localVote),
-    };
-  });
-};
-
-const setRealUser = (data) => {
-  clearNuxtState("user");
-  useState("user", () => {
-    return data;
-  });
-};
-
 const specialLogin = (login) => {
   if (login === "demo") {
-    setDemoUser();
+    setDemoUser(password.value);
     setTimeout(async () => {
       await navigateTo("/vote");
       toggleLoading(false);
@@ -99,52 +76,33 @@ const onLogin = async (e) => {
   toggleLoading(true);
   const pass = password.value;
 
-  // Handle special logins
   if (pass === "123456") {
     specialLogin("demo");
     return;
-  }
-
-  // Validate password format
-  if (!pass || pass.length !== 6) {
+  } else if (!pass || pass.length !== 6) {
     handleError("password");
     return;
   }
 
-  // Try to fetch user
   const result = await fetchUser(pass);
   if (!result.success) {
     handleError(result.type);
+  } else {
+    handleLogin(result.data)
   }
 };
 
-const fetchUser = async (pass) => {
-  try {
-    const { data, error } = await client.from('members').select(` *, voteRecord:voters ( candidates, timestamp )`).eq('id', pass).single();
-    if (error && error.message === 'TypeError: Failed to fetch') {
-      return { success: false, type: "network" };
-    }
-
-    if (data === null) {
-      return { success: false, type: "password" };
-    }
-
-    console.log("Fetched user data:", data);
-    setRealUser(data);
-    if (data.name === "@Admin") {
-      specialLogin("admin");
-    } else {
-      await navigateTo("/vote");
-    }
-    toggleLoading(false);
-    return { success: true };
-  } catch (error) {
-    console.error("Network error while fetching user:", error);
-    return { success: false, type: "network" };
+const handleLogin = async (user) => {
+  console.log("Fetched user:", user);
+  setRealUser(user);
+  if (user.name === "@Admin") {
+    specialLogin("admin");
+  } else {
+    await navigateTo("/vote");
   }
+  toggleLoading(false);
 };
 
-// Unified error handler
 const handleError = (type) => {
   toggleLoading(false);
   err.status = true;
