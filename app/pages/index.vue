@@ -57,13 +57,13 @@ const toggleLoading = (state) => {
 };
 
 const specialLogin = (login) => {
-  if (login === "demo") {
+   if (login === "demo") {
     setDemoUser(password.value);
     setTimeout(async () => {
       await navigateTo("/vote");
       toggleLoading(false);
     }, 1000);
-  }
+   }
 
   if (login === "admin") {
     toggleLoading(false);
@@ -76,10 +76,12 @@ const onLogin = async (e) => {
   toggleLoading(true);
   const pass = password.value;
 
-  if (pass === "123456") {
-    specialLogin("demo");
-    return;
-  } else if (!pass || pass.length !== 6) {
+  // remove demo login
+  // if (pass === "123456") {
+  //   specialLogin("demo");
+  //   return;
+  // }
+  if (!pass || pass.length !== 6) {
     handleError("password");
     return;
   }
