@@ -47,48 +47,35 @@
 </template>
 
 <script setup>
-const supabase = useSupabaseClient();
+const client = useSupabaseClient();
 
 definePageMeta({
   middleware: 'admin-auth',
+});
+
+onMounted(() => {
+  realtimeChannel = client
+    .channel("public:voters")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "voters" },
+      () => refreshVoters()
+    );
+  realtimeChannel.subscribe();
+});
+
+onUnmounted(() => {
+  client.removeChannel(realtimeChannel);
 });
 
 let realtimeChannel;
 const { data: voters, refresh: refreshVoters } = await useAsyncData(
   "voters",
   async () => {
-    const { data } = await supabase.from("voters").select();
+    const { data } = await client.from("voters").select();
     return data;
   }
 );
-
-const candidates = ref([
-  {
-    image: './img/adura.jpg',
-    name: 'Sis. Aduragbemi Rehoboth',
-    votes: 0
-  },
-  {
-    image: './img/grace.jpg',
-    name: 'Sis. Grace Asuquo',
-    votes: 0
-  },
-  {
-    image: './img/tomisin.jpg',
-    name: 'Sis. Tomisin George',
-    votes: 0
-  },
-  {
-    image: './img/hassan.jpg',
-    name: 'Bro. Kanmi Hassan',
-    votes: 0
-  },
-  {
-    image: './img/richard.jpg',
-    name: 'Bro. Richard Olaleye',
-    votes: 0
-  },
-]);
 
 watchEffect(() => {
   // console.log('voters updated')
@@ -113,21 +100,6 @@ const listContestant = (candidates) => {
   const arr = candidates.split(",");
   return arr;
 };
-
-onMounted(() => {
-  realtimeChannel = supabase
-    .channel("public:voters")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "voters" },
-      () => refreshVoters()
-    );
-  realtimeChannel.subscribe();
-});
-
-onUnmounted(() => {
-  supabase.removeChannel(realtimeChannel);
-});
 
 const totalVotes = computed(() => {
   return voters.value.length || 0;
@@ -213,6 +185,7 @@ const totalVotes = computed(() => {
       width: 80px;
       height: 80px;
       object-fit: cover;
+      object-position: 0 0;
       border-radius: 50%;
     }
 

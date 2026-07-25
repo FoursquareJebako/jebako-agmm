@@ -33,7 +33,7 @@
         <!-- @click="updateProfile" -->
         {{ updateLoad === true ? "" : "Update Profile" }}
         <span id="spinner" v-show="updateLoad">
-          <Icon name="mingcute:loading-fill" color="white" size="3rem" />
+          <Icon name="svg-spinners:bars-scale-fade" style="color: white" size="25px" />
         </span>
       </button>
     </div>
@@ -70,7 +70,6 @@ const goBack = () => {
 }
 
 const updateProfile = async () => {
-  // update db and logout
   updateLoad.value = true
   const { data, error } = await client
     .from('members')
@@ -83,11 +82,15 @@ const updateProfile = async () => {
     .eq('id', user.value.id)
     .select()
   updateLoad.value = false
-  localUser.value = data
+  if (error) {
+    console.error('Error updating profile:', error)
+    alert('We could not update your profile, please try again later.')
+  } else {
+    localUser.value = data
+    alert('Your profile has been updated successfully.')
+    user.value = data[0]
+  }
 }
-setTimeout(() => {
-  updateLoad.value = false
-}, 1000)
 </script>
 
 <style scoped lang="less">
@@ -249,16 +252,5 @@ setTimeout(() => {
 
 #spinner {
   display: inline-block;
-  animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-  from {
-    transform: translateY(-2px) rotate(0deg);
-  }
-
-  to {
-    transform: translateY(-2px) rotate(360deg);
-  }
 }
 </style>

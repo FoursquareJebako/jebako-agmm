@@ -19,14 +19,14 @@
       </div>
     </div>
     <p v-if="isDemo" id="demo-warn">Voting with Demo account won't be counted.</p>
-    <div class="portal-note" v-if="!isDemo && !openPortal">
+    <div class="portal-note" v-if="!isDemo && !portalState.openPortal">
       <h4>AGMM Voting Schedule</h4>
       <p>
         Voting for the AGMM will start on <b>Saturday, 25th of July</b>, from
         <b>7AM to 10 PM</b>
       </p>
     </div>
-    <div class="portal-note" v-else-if="openPortal && votePaused">
+    <div class="portal-note" v-else-if="portalState.openPortal && portalState.votePaused">
       <h4>AGMM Voting Schedule</h4>
       <p>
         Voting for the AGMM will resume by 7am and continue until 10am on
@@ -34,16 +34,16 @@
       </p>
     </div>
 
-    <div id="vote-summary" v-else-if="hasVoted || voteEnds">
-      <h4>{{ voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
+    <div id="vote-summary" v-else-if="hasVoted || portalState.voteEnds">
+      <h4>{{ portalState.voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
       <p>
         Click the button below to see result
-        {{ !voteEnds ? "when voting ends" : "" }}
+        {{ !portalState.voteEnds ? "when voting ends" : "" }}
       </p>
-      <button id="result-btn" :disabled="!voteEnds" @click="fetchResult()">
+      <button id="result-btn" :disabled="!portalState.voteEnds" @click="fetchResult()">
         See result
       </button>
-      <div id="votes-wrapper" v-if="showResult">
+      <div id="votes-wrapper" v-if="RESULT_ONSCREEN">
         <div id="totals">
           <h3>Total Voters</h3>
           <p>{{ totalVoters }}</p>
@@ -111,68 +111,29 @@
         </div>
       </div>
     </div>
-  </DIV>
+  </div>
 </template>
 
 <script setup lang="js">
-import { ref, useState, definePageMeta } from '#imports';
+import { ref, reactive, useState, definePageMeta, computed } from '#imports';
+import { autoPortal } from '../utils/auto-portal';
+import { candidates } from '../utils/user';
+definePageMeta({
+  middleware: 'auth',
+});
+const client = useSupabaseClient();
 const user = useState('user');
+const portalState = computed(() => autoPortal())
+const RESULT_ONSCREEN = ref(false)
+const totalVoters = ref(null)
 const submitState = reactive({
   loading: false,
   confirm: false
 })
 const showConfirmModal = ref(false)
-const candidates = ref([
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 1',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 2',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 3',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user2.jpg',
-    name: 'Contestant 4',
-    selected: false,
-    votes: 0
-  },
-  {
-    image: './img/user1.jpg',
-    name: 'Contestant 5',
-    selected: false,
-    votes: 0
-  },
-]);
-const client = useSupabaseClient();
-
-definePageMeta({
-  middleware: 'auth',
-});
-
-/* AUTO CONTROLED STATES !! */
-const openPortal = ref(false)
-const votePaused = ref(false)
-const voteEnds = ref(false)
-const showResult = ref(false)
-/* AUTO CONTROLLED STATES !! */
-
-const totalVoters = ref(null)
-
 const hasVoted = computed(() => {
   return user.value.voteRecord
 })
-
 const isDemo = computed(() => {
   return user.value.id === '123456'
 })
@@ -211,33 +172,6 @@ const isDisabled = computed(() => {
     return true
   }
 })
-
-const autoPortal = () => {
-  const now = new Date()
-  const startTime = new Date('July 25, 2026 07:00:00') - now
-  const pauseTime = new Date('July 25, 2026 16:01:00') - now
-  const resumeTime = new Date('July 26, 2026 17:40:00') - now
-  const endTime = new Date('July 26, 2026 10:01:00') - now
-
-  if (startTime <= 0) {
-    // time lapse 1
-    openPortal.value = true
-  }
-  if (pauseTime <= 0) {
-    // time lapse 2
-    votePaused.value = true
-  }
-  if (resumeTime <= 0) {
-    // time lapse 3
-    votePaused.value = false
-  }
-  if (endTime <= 0) {
-    // time lapse 4
-    voteEnds.value = true
-  }
-}
-
-// autoPortal()
 
 const chooseFn = (contestant) => {
   if (submitState.loading) {
@@ -289,18 +223,17 @@ const handleSubmit = async (voter) => {
       console.error("Error submitting vote:", result.error);
       alert("We could not submit your vote, please try again later.");
     } else {
-      console.log('Vote submitted successfully')
       console.log("Real user has voted:", user.value);
     }
   }
 }
 
 const fetchResult = async () => {
-  if (showResult.value) {
-    // fetched and result is on page already
+  if (RESULT_ONSCREEN.value) {
     return false
   }
-  const { data: voters, error } = await client.from('voters').select('candidates')
+
+  const { data: voters, error } = await fetchVoteResult()
   if (error) {
     return false;
   }
@@ -319,7 +252,7 @@ const fetchResult = async () => {
   }
 
   totalVoters.value = voters.length || 'null'
-  showResult.value = true
+  RESULT_ONSCREEN.value = true
 }
 
 const getName = () => {

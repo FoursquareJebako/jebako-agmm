@@ -44,3 +44,13 @@ export const isRealVote = async (voter) => {
     return { success: true };
   }
 };
+
+export const fetchVoteResult = async () => {
+  const client = useSupabaseClient();
+  const { data: voters, error } = await client.from("voters").select("candidates");
+  if (error) {
+    return { success: false, error };
+  } else {
+    return { success: true, data: voters };
+  }
+};
