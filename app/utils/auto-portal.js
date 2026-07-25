@@ -13,7 +13,7 @@ export const autoPortal = (now = new Date()) => {
 
   return {
     openPortal: hasStarted, // hasStarted
-    votePaused: hasPaused && !hasResumed, // hasPaused && !hasResumed
+    votePaused: false, // hasPaused && !hasResumed
     voteEnds: hasEnded, //hasEnded
   };
 };
