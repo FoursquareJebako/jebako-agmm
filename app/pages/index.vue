@@ -141,7 +141,7 @@ const handleError = (type) => {
   h1 {
     margin-top: 20px;
     text-align: center;
-    font-size: 25px;
+    font-size: 20px;
   }
 }
 

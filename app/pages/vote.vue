@@ -33,7 +33,6 @@
         <b>Sunday, July 26th</b>
       </p>
     </div>
-
     <div id="vote-summary" v-else-if="hasVoted || portalState.voteEnds">
       <h4>{{ portalState.voteEnds ? "Voting Has Ended" : "Thanks for voting" }}</h4>
       <p>
@@ -331,7 +330,7 @@ const cancelVote = () => {
 
   #name {
     font-weight: 700;
-    font-size: 2.5rem;
+    font-size: 2.3rem;
 
     @media @desktop {
       font-size: 3rem;
@@ -509,6 +508,7 @@ const cancelVote = () => {
       width: 80px;
       height: 80px;
       object-fit: cover;
+      object-position: 0 0;
       border-radius: 50%;
     }
 
@@ -571,15 +571,12 @@ const cancelVote = () => {
     width: 100%;
     max-width: 600px;
     min-height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 100px 1fr;
     padding: 15px;
     gap: 0 50px;
-    //grid-template-columns: 100px 1fr;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
       rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-    //border: 1.4px solid #e6e6e6;
     border-radius: 10px;
 
     &:not(:first-of-type) {
@@ -590,32 +587,39 @@ const cancelVote = () => {
       }
     }
 
+    .profile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
     img {
-      width: 100px;
-      height: 100px;
-      border-radius: 100%;
-      object-position: 0 0;
+      width: 90px;
+      height: 90px;
       object-fit: cover;
+      object-position: 0 0;
+      border-radius: 50%;
     }
 
     .content {
+      width: 100%;
       display: flex;
       flex-direction: column;
-      max-width: 170px;
-      //background: red;
-      text-align: center;
       justify-content: center;
       align-items: center;
+      text-align: center;
     }
 
     h3 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
     }
 
     .select-btn {
       width: 130px;
       margin-top: 10px;
-      padding: 7px;
+      padding: 5px;
       outline: none;
       border-radius: 3px;
       background: transparent;
